@@ -5,5 +5,7 @@
   <router-view />
 </template>
 
-<style scoped>
+<style>
+/* Global styles are in main.css */
 </style>
+
