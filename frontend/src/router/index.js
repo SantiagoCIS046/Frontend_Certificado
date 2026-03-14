@@ -1,14 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '../views/Login.vue'
 import Dashboard from '../views/Dashboard.vue'
-import PlatformSelection from '../views/PlatformSelection.vue'
-
-
+import Certificados from '../views/Certificados.vue'
 
 const routes = [
   {
     path: '/',
-    redirect: '/login'
+    redirect: '/dashboard'
   },
   {
     path: '/login',
@@ -21,12 +19,10 @@ const routes = [
     component: Dashboard
   },
   {
-    path: '/platform-selection',
-    name: 'PlatformSelection',
-    component: PlatformSelection
+    path: '/certificados',
+    name: 'Certificados',
+    component: Certificados
   }
-
-
 ]
 
 const router = createRouter({

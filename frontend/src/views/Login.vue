@@ -10,12 +10,21 @@ const showPassword = ref(false)
 
 const handleLogin = () => {
   if (email.value && password.value) {
+    const savedPassword = localStorage.getItem('userPassword');
+    
+    if (savedPassword && password.value !== savedPassword) {
+      alert('Contraseña incorrecta.');
+      return;
+    }
+
     // Save user info to simulate session
-    const name = email.value.split('@')[0];
-    localStorage.setItem('userName', name.charAt(0).toUpperCase() + name.slice(1));
+    if (!localStorage.getItem('userName')) {
+      const name = email.value.split('@')[0];
+      localStorage.setItem('userName', name.charAt(0).toUpperCase() + name.slice(1));
+    }
     
     // Redirigir al dashboard después del "login" (simulado para frontend)
-    router.push('/dashboard')
+    router.push('/certificados')
   } else {
     alert('Por favor, ingrese sus credenciales.')
   }
