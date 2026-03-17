@@ -107,6 +107,7 @@ import soiLogo from '../assets/platforms/soi_logo.png';
 import asopagosLogo from '../assets/platforms/asopagos_logo.png';
 import compensarLogo from '../assets/platforms/compensar_logo.png';
 import aportesLogo from '../assets/platforms/aportes_logo.png';
+import { notify } from '../utils/notifications';
 
 const router = useRouter();
 const userName = ref('Usuario');
@@ -120,7 +121,7 @@ const toggleUserMenu = () => {
 };
 
 const handleEditProfile = () => {
-  alert('Editar perfil - Próximamente');
+  notify('Editar perfil - Próximamente', 'success');
   isUserMenuOpen.value = false;
 };
 
@@ -149,7 +150,7 @@ const handleFormAction = () => {
     } else if (selectedPlatform.value === 'aportes') {
       activeForm.value = 'aportes';
     } else {
-      alert(`Plataforma ${selectedPlatform.value} seleccionada. Próximamente disponible.`);
+      notify(`Plataforma ${selectedPlatform.value} seleccionada. Próximamente disponible.`, 'success');
     }
   }
 };

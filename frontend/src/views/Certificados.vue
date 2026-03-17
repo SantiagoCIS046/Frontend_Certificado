@@ -14,9 +14,10 @@
 
       <div class="nav-right">
         <div class="nav-icons">
-          <button class="icon-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-          </button>
+          <div class="nav-icon-badge" title="Notificaciones" @click="handleNotificationClick">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span class="badge-dot"></span>
+          </div>
         </div>
         <div class="user-container">
           <div class="user-info" @click="toggleUserMenu">
@@ -53,7 +54,7 @@
           <p class="page-subtitle">Gestione, filtre y exporte certificados de seguridad social de contratistas</p>
         </div>
         <div class="header-actions">
-          <button class="btn btn-white" @click="handleExportPDF">
+          <button class="btn btn-white" @click="handleExportPDF()">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             Exportar PDF
           </button>
@@ -62,7 +63,7 @@
             Exportar Excel
           </button>
           <button class="btn btn-blue" @click="handleExportDrive">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-8 10 8M12 22V12"/></svg>
             Sincronizar Drive
           </button>
         </div>
@@ -285,55 +286,11 @@
         </div>
         <div class="stat-card">
           <div class="stat-icon blue">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><polyline points="22 4 15 4 15 11"/></svg>
           </div>
           <div class="stat-info">
             <span class="stat-label">ÚLTIMA SINCRONIZACIÓN</span>
-            <span class="stat-value">{{ lastSyncTime }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Drive Sync Modal -->
-      <div v-if="isDriveModalOpen" class="modal-overlay" @click.self="closeDriveModal">
-        <div class="modal-card">
-          <div class="modal-header">
-            <div class="modal-icon-circle">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
-            <h3>Sincronizar con Google Drive</h3>
-            <p>El reporte se subirá automáticamente a su unidad en la nube.</p>
-          </div>
-          
-          <div class="modal-body">
-            <div class="form-group">
-              <label>Cuenta de Google (Email)</label>
-              <div class="input-with-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 0 1 12 22 10 10 0 0 1 2 12 10 10 0 0 1 12 2 10 10 0 0 1 22 12z"/><path d="M16 12a4 4 0 1 0-8 0 4 4 0 0 0 8 0Zm0 0v1.5a2.5 2.5 0 0 0 5 0V12a9 9 0 1 0-3.9 7.1"/></svg>
-                <input 
-                  type="email" 
-                  v-model="driveEmail" 
-                  placeholder="ejemplo@google.com" 
-                  :disabled="isSyncingToDrive"
-                >
-              </div>
-              <small>Esta es la cuenta donde se guardará el archivo PDF generado.</small>
-            </div>
-
-            <div v-if="isSyncingToDrive" class="sync-progress">
-              <div class="progress-bar-container">
-                <div class="progress-bar-fill"></div>
-              </div>
-              <p>Sincronizando archivos con Google Drive...</p>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button class="btn-cancel" @click="closeDriveModal" :disabled="isSyncingToDrive">Cancelar</button>
-            <button class="btn-confirm" @click="confirmDriveExport" :disabled="isSyncingToDrive">
-              <span v-if="isSyncingToDrive" class="loading-spinner-small"></span>
-              {{ isSyncingToDrive ? 'Sincronizando...' : 'Empezar Sincronización' }}
-            </button>
+            <span class="stat-value">{{ lastSyncTime || 'No sincronizado' }}</span>
           </div>
         </div>
       </div>
@@ -413,6 +370,44 @@
           </div>
         </div>
       </div>
+
+      <!-- Drive Sync Modal -->
+      <div v-if="isDriveModalOpen" class="modal-overlay" @click.self="closeDriveModal">
+        <div class="modal-card">
+          <div class="modal-header">
+            <div class="modal-icon-circle">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-8 10 8M12 22V12"/></svg>
+            </div>
+            <span class="proto-badge">Integración Drive</span>
+            <h3>Sincronizar con Google Drive</h3>
+            <p>Se generará un reporte consolidado y se subirá automáticamente a tu unidad de Drive.</p>
+          </div>
+
+          <div class="modal-body">
+            <label>Cuenta de Destino</label>
+            <div class="input-with-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="email" v-model="driveEmail" placeholder="correo@ejemplo.com">
+            </div>
+            <small>El reporte estará disponible en la carpeta "Certificados_SENA".</small>
+
+            <div v-if="isSyncingToDrive" class="sync-progress">
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill"></div>
+              </div>
+              <p>Sincronizando archivos...</p>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn-cancel" @click="closeDriveModal" :disabled="isSyncingToDrive">Cancelar</button>
+            <button class="btn-confirm" @click="confirmDriveExport" :disabled="isSyncingToDrive">
+              <span v-if="isSyncingToDrive" class="loading-spinner-small"></span>
+              {{ isSyncingToDrive ? 'Sincronizando...' : 'Iniciar Sincronización' }}
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
 
     <!-- Footer -->
@@ -439,6 +434,7 @@ import SoiForm from '../components/SoiForm.vue';
 import AsopagosForm from '../components/AsopagosForm.vue';
 import CompensarForm from '../components/CompensarForm.vue';
 import AportesForm from '../components/AportesForm.vue';
+import { notify } from '../utils/notifications';
 
 const router = useRouter();
 const userName = ref('Usuario');
@@ -454,9 +450,11 @@ const selectedContractor = ref('');
 const filterPlatform = ref('');
 const filterStatus = ref('');
 const searchQuery = ref('');
+
+// Google Drive Sync State
 const isDriveModalOpen = ref(false);
 const isSyncingToDrive = ref(false);
-const driveEmail = ref('usuario.ejemplo@sena.edu.co');
+const driveEmail = ref('');
 const lastSyncTime = ref('');
 
 // Visualization Modal State
@@ -553,7 +551,7 @@ const closeEditProfileModal = () => {
 const saveProfileChanges = () => {
   if (profileData.value.password || profileData.value.confirmPassword) {
     if (profileData.value.password !== profileData.value.confirmPassword) {
-      alert('Las contraseñas no coinciden.');
+      notify('Las contraseñas no coinciden.', 'error');
       return;
     }
     localStorage.setItem('userPassword', profileData.value.password);
@@ -563,7 +561,7 @@ const saveProfileChanges = () => {
     localStorage.setItem('userName', userName.value);
   }
   
-  alert('Perfil actualizado correctamente.');
+  notify('Perfil actualizado correctamente.', 'success');
   closeEditProfileModal();
 };
 
@@ -714,7 +712,7 @@ const clearAllFilters = () => {
 
 const handleExportExcel = () => {
   if (filteredCertificates.value.length === 0) {
-    alert('No hay datos para exportar con los filtros actuales.');
+    notify('No hay datos para exportar con los filtros actuales.', 'error');
     return;
   }
 
@@ -754,7 +752,7 @@ const handleExportPDF = (specificItem = null) => {
   const dataToExport = specificItem ? [specificItem] : filteredCertificates.value;
 
   if (dataToExport.length === 0) {
-    alert('No hay datos para exportar.');
+    notify('No hay datos para exportar.', 'error');
     return;
   }
   
@@ -800,38 +798,41 @@ const handleExportPDF = (specificItem = null) => {
 };
 
 const handleExportDrive = () => {
-  if (filteredCertificates.value.length === 0) {
-    alert('No hay datos para sincronizar con Google Drive.');
-    return;
-  }
+  console.log('Opening Drive Sync Modal...');
   isDriveModalOpen.value = true;
 };
 
+const handleNotificationClick = () => {
+  notify('No hay nuevas notificaciones en este momento.', 'success');
+};
+
 const closeDriveModal = () => {
-  if (isSyncingToDrive.value) return;
-  isDriveModalOpen.value = false;
+  if (!isSyncingToDrive.value) {
+    isDriveModalOpen.value = false;
+  }
 };
 
 const confirmDriveExport = () => {
   if (!driveEmail.value || !driveEmail.value.includes('@')) {
-    alert('Por favor, ingrese un correo electrónico válido.');
+    notify('Por favor, ingresa un correo electrónico válido.', 'error');
     return;
   }
 
   isSyncingToDrive.value = true;
   
-  // Simulate the process
+  // Simulate API call to Google Drive
   setTimeout(() => {
-    // Stage 2: Uploading
-    setTimeout(() => {
-      isSyncingToDrive.value = false;
-      isDriveModalOpen.value = false;
-      alert(`¡Sincronización Exitosa! El reporte se ha guardado en la unidad de Drive asociada a: ${driveEmail.value}`);
-      
-      // Persist the email used if it changed
-      localStorage.setItem('lastDriveEmail', driveEmail.value);
-    }, 2500);
-  }, 1500);
+    isSyncingToDrive.value = false;
+    isDriveModalOpen.value = false;
+    
+    const now = new Date();
+    lastSyncTime.value = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    localStorage.setItem('lastDriveSync', lastSyncTime.value);
+    localStorage.setItem('driveEmail', driveEmail.value);
+    
+    notify('Sincronización completada exitosamente.', 'success');
+  }, 3000);
 };
 
 const generatePDFBlob = () => {
@@ -858,20 +859,19 @@ const generatePDFBlob = () => {
   return doc;
 };
 
+
+
 onMounted(() => {
   const savedName = localStorage.getItem('userName');
   if (savedName) {
     userName.value = savedName;
   }
 
-  const savedEmail = localStorage.getItem('userEmail') || localStorage.getItem('lastDriveEmail');
-  if (savedEmail) {
-    driveEmail.value = savedEmail;
-  }
+  const savedSync = localStorage.getItem('lastDriveSync');
+  if (savedSync) lastSyncTime.value = savedSync;
   
-  // Set sync time
-  const now = new Date();
-  lastSyncTime.value = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+  const savedEmail = localStorage.getItem('driveEmail');
+  if (savedEmail) driveEmail.value = savedEmail;
 });
 </script>
 
@@ -959,9 +959,40 @@ onMounted(() => {
 
 .nav-icons {
   display: flex;
-  gap: 0.75rem;
-  border-right: 1px solid #e2e8f0;
-  padding-right: 1.5rem;
+  align-items: center;
+  gap: 1.25rem;
+  padding-right: 1.25rem;
+  border-right: 1px solid #f1f5f9;
+}
+
+.nav-icon-badge {
+  position: relative;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+}
+
+.nav-icon-badge:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.badge-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 9px;
+  height: 9px;
+  background-color: #ef4444;
+  border: 1.5px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
 }
 
 .icon-btn {
@@ -1150,6 +1181,10 @@ onMounted(() => {
   animation: spin 0.8s linear infinite;
   display: inline-block;
 }
+
+
+
+
 
 @keyframes spin {
   to { transform: rotate(360deg); }
@@ -1770,7 +1805,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 5000;
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -1945,6 +1980,8 @@ onMounted(() => {
   cursor:not-allowed;
 }
 
+
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -1959,6 +1996,8 @@ onMounted(() => {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
+
+
 
 /* Visualization Modal Special Styles */
 .form-modal-overlay {

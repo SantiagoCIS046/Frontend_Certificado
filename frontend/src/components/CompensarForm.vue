@@ -23,9 +23,10 @@
             <div class="input-group col-4">
               <label>Tipo de Documento</label>
               <div class="select-wrapper">
-                <select v-model="formData.docType" :disabled="readOnly">
-                  <option value="CC">Cédula de Ciudadanía (CC)</option>
-                  <option value="CE">Cédula de Extranjería (CE)</option>
+                <select v-model="formData.documentType" :disabled="readOnly">
+                  <option v-for="type in documentTypes" :key="type.value" :value="type.value">
+                    {{ type.label }} ({{ type.value }})
+                  </option>
                 </select>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
               </div>
@@ -33,12 +34,23 @@
 
             <div class="input-group col-8">
               <label>Número de Documento</label>
-              <input type="text" v-model="formData.docNumber" placeholder="Ej: 1023456789" :disabled="readOnly" />
+              <input type="text" v-model="formData.documentNumber" placeholder="Ej: 1023456789" :disabled="readOnly" />
             </div>
 
-            <div class="input-group col-12">
+            <div class="input-group col-6">
               <label>Nombre Completo</label>
               <input type="text" v-model="formData.fullName" placeholder="Ingrese nombres y apellidos" :disabled="readOnly" />
+            </div>
+
+            <div class="input-group col-6">
+              <label>EPS</label>
+              <div class="select-wrapper">
+                <select v-model="formData.eps" :disabled="readOnly">
+                  <option value="" disabled>Seleccione su EPS...</option>
+                  <option v-for="eps in epsCatalogGeneral" :key="eps" :value="eps">{{ eps }}</option>
+                </select>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
+              </div>
             </div>
           </div>
         </div>
@@ -48,7 +60,7 @@
       <section class="detail-box">
         <div class="section-header">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="section-icon"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
-          <h3 class="section-title">DETALLE DE SOLICITUD - COMPENSAR</h3>
+          <h3 class="section-title">DETALLE DE SOLICITUD - MI PLANILLA</h3>
         </div>
         
         <div class="form-grid">
@@ -56,8 +68,8 @@
           <div class="input-group col-6">
             <label>Mes periodo salud</label>
             <div class="select-wrapper">
-              <select v-model="formData.healthMonth" :disabled="readOnly">
-                <option v-for="m in months" :key="m" :value="m">{{ m }}</option>
+              <select v-model="formData.reportMonth" :disabled="readOnly">
+                <option v-for="m in monthsList" :key="m.value" :value="m.value">{{ m.name }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -65,8 +77,8 @@
           <div class="input-group col-6">
             <label>Año periodo salud</label>
             <div class="select-wrapper">
-              <select v-model="formData.healthYear" :disabled="readOnly">
-                <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
+              <select v-model="formData.reportYear" :disabled="readOnly">
+                <option v-for="y in yearsList" :key="y" :value="y">{{ y }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -91,7 +103,7 @@
             <label>Mes del pago (texto)</label>
             <div class="select-wrapper">
               <select v-model="formData.paymentMonth" :disabled="readOnly">
-                <option v-for="m in months" :key="m" :value="m">{{ m }}</option>
+                <option v-for="m in monthsList" :key="m.value" :value="m.name">{{ m.name }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -100,7 +112,7 @@
             <label>Año del pago</label>
             <div class="select-wrapper">
               <select v-model="formData.paymentYear" :disabled="readOnly">
-                <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
+                <option v-for="y in yearsList" :key="y" :value="y">{{ y }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -114,9 +126,9 @@
               <label>Supervisor Encargado</label>
             </div>
             <div class="select-wrapper">
-              <select v-model="formData.supervisor" :disabled="readOnly">
-                <option value="" disabled>Seleccione el supervisor de su contrato...</option>
-                <option v-for="s in supervisors" :key="s" :value="s">{{ s }}</option>
+              <select v-model="formData.supervisorId" :disabled="readOnly || loadingSupervisors">
+                <option value="" disabled>{{ loadingSupervisors ? 'Cargando supervisores...' : 'Seleccione el supervisor...' }}</option>
+                <option v-for="s in supervisors" :key="s._id" :value="s._id">{{ s.fullName }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -125,11 +137,12 @@
       </section>
 
       <div class="form-actions" v-if="!readOnly">
-        <button class="btn-send" @click="handleSend">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="send-icon"><path d="m22 2-7 20-4-9-9-4Z"/></svg>
-          Enviar Solicitud
+        <button class="btn-send" @click="handleSend" :disabled="sending">
+          <span v-if="sending" class="spinner-small"></span>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="send-icon"><path d="m22 2-7 20-4-9-9-4Z"/></svg>
+          {{ sending ? 'Enviando...' : 'Enviar Solicitud' }}
         </button>
-        <button class="btn-cancel" @click="$emit('cancel')">Cancelar</button>
+        <button class="btn-cancel" @click="$emit('cancel')" :disabled="sending">Cancelar</button>
       </div>
       <div class="form-actions" v-else>
         <button class="btn-cancel" style="flex: 1;" @click="$emit('cancel')">Cerrar Vista</button>
@@ -139,7 +152,11 @@
 </template>
 
 <script setup>
-import { reactive, defineEmits, defineProps, onMounted } from 'vue';
+import { reactive, ref, defineEmits, defineProps, onMounted } from 'vue';
+import { notify } from '../utils/notifications';
+import { reportService } from '../services/reportService';
+import { supervisorService } from '../services/supervisorService';
+import { documentTypes, epsCatalogGeneral, monthsList, yearsList, fallbackSupervisors } from '../constants/options';
 
 const props = defineProps({
   initialData: {
@@ -155,42 +172,96 @@ const props = defineProps({
 const emit = defineEmits(['cancel', 'success']);
 
 const formData = reactive({
-  docType: 'CC',
-  docNumber: '',
+  documentType: 'CC',
+  documentNumber: '',
   fullName: '',
-  healthMonth: 'Enero',
-  healthYear: '2024',
+  eps: '',
+  platform: 'mi_planilla',
+  reportMonth: new Date().getMonth() + 1,
+  reportYear: new Date().getFullYear(),
   spreadsheetNumber: '',
   amountPaid: '',
   paymentDay: '',
-  paymentMonth: 'Enero',
-  paymentYear: '2024',
-  supervisor: ''
+  paymentMonth: monthsList[new Date().getMonth()].name,
+  paymentYear: new Date().getFullYear(),
+  supervisorId: ''
 });
 
-const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-const years = ['2023', '2024', '2025'];
-const supervisors = [
-  'Miguel Ángel Corredor',
-  'Santiago Pérez',
-  'Claudia Patricia Gómez',
-  'Ricardo Silva',
-  'Elena López'
-];
+const supervisors = ref([]);
+const loadingSupervisors = ref(false);
+const sending = ref(false);
+
+const fetchSupervisors = async () => {
+  loadingSupervisors.value = true;
+  try {
+    const data = await supervisorService.getSupervisors();
+    supervisors.value = data;
+  } catch (error) {
+    console.error('Error fetching supervisors, using fallback:', error);
+    supervisors.value = fallbackSupervisors;
+  } finally {
+    loadingSupervisors.value = false;
+  }
+};
 
 onMounted(() => {
+  fetchSupervisors();
+
   if (props.initialData && Object.keys(props.initialData).length > 0) {
-    Object.assign(formData, props.initialData);
+    formData.documentType = props.initialData.documentType || 'CC';
+    formData.documentNumber = props.initialData.documentNumber || props.initialData.cedula || '';
+    formData.fullName = props.initialData.fullName || props.initialData.persona || '';
+    formData.eps = props.initialData.eps || '';
+    formData.reportMonth = props.initialData.reportMonth || 1;
+    formData.reportYear = props.initialData.reportYear || 2024;
+    formData.supervisorId = props.initialData.supervisorId || '';
     
-    // Si el item viene de la tabla de certificados, mapear persona -> fullName y cedula -> docNumber
-    if (props.initialData.persona) formData.fullName = props.initialData.persona;
-    if (props.initialData.cedula) formData.docNumber = props.initialData.cedula;
+    if (props.initialData.platformData) {
+      formData.spreadsheetNumber = props.initialData.platformData.numeroPlanilla || '';
+      formData.amountPaid = props.initialData.platformData.valorPagado || '';
+      formData.paymentDay = props.initialData.platformData.fechaPagoDia || '';
+      formData.paymentMonth = props.initialData.platformData.fechaPagoMes || '';
+      formData.paymentYear = props.initialData.platformData.fechaPagoAnio || '';
+    }
   }
 });
 
-const handleSend = () => {
-  alert('Solicitud Enviada con éxito (Compensar)');
-  emit('success', formData);
+const handleSend = async () => {
+  if (!formData.documentNumber || !formData.fullName || !formData.eps || !formData.supervisorId || !formData.spreadsheetNumber) {
+    notify('Por favor complete todos los campos obligatorios, incluyendo el número de planilla.', 'error');
+    return;
+  }
+
+  sending.value = true;
+  try {
+    const payload = {
+      documentType: formData.documentType,
+      documentNumber: formData.documentNumber,
+      fullName: formData.fullName,
+      eps: formData.eps,
+      supervisorId: formData.supervisorId,
+      reportMonth: formData.reportMonth,
+      reportYear: formData.reportYear,
+      platform: 'mi_planilla',
+      platformData: {
+        mes: String(formData.reportMonth),
+        anio: String(formData.reportYear),
+        numeroPlanilla: formData.spreadsheetNumber,
+        valorPagado: formData.amountPaid,
+        fechaPagoDia: String(formData.paymentDay),
+        fechaPagoMes: formData.paymentMonth,
+        fechaPagoAnio: String(formData.paymentYear)
+      }
+    };
+
+    await reportService.createReport(payload);
+    notify('Su solicitud de Mi Planilla ha sido enviada correctamente.');
+    emit('success', payload);
+  } catch (error) {
+    notify('Error al enviar la solicitud. Intente nuevamente.', 'error');
+  } finally {
+    sending.value = false;
+  }
 };
 </script>
 

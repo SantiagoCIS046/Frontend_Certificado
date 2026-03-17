@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { notify } from '../utils/notifications'
 
 const router = useRouter()
 const email = ref('')
@@ -13,7 +14,7 @@ const handleLogin = () => {
     const savedPassword = localStorage.getItem('userPassword');
     
     if (savedPassword && password.value !== savedPassword) {
-      alert('Contraseña incorrecta.');
+      notify('Contraseña incorrecta.', 'error');
       return;
     }
 
@@ -26,7 +27,7 @@ const handleLogin = () => {
     // Redirigir al dashboard después del "login" (simulado para frontend)
     router.push('/certificados')
   } else {
-    alert('Por favor, ingrese sus credenciales.')
+    notify('Por favor, ingrese sus credenciales.', 'error')
   }
 }
 </script>
@@ -86,9 +87,9 @@ const handleLogin = () => {
               <p class="form-subtitle">Ingrese sus credenciales de acceso</p>
             </div>
 
-            <div class="input-group">
+            <div class="login-input-group">
               <label>Correo o Usuario</label>
-              <div class="input-wrapper">
+              <div class="login-input-wrapper">
                 <div class="field-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </div>
@@ -101,9 +102,9 @@ const handleLogin = () => {
               </div>
             </div>
 
-            <div class="input-group">
+            <div class="login-input-group">
               <label>Contraseña</label>
-              <div class="input-wrapper">
+              <div class="login-input-wrapper">
                 <div class="field-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </div>
@@ -353,11 +354,11 @@ const handleLogin = () => {
   font-weight: 500;
 }
 
-.input-group {
+.login-input-group {
   margin-bottom: 1.4rem;
 }
 
-.input-group label {
+.login-input-group label {
   display: block;
   font-size: 0.82rem;
   font-weight: 700;
@@ -365,7 +366,7 @@ const handleLogin = () => {
   margin-bottom: 0.6rem;
 }
 
-.input-wrapper {
+.login-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
@@ -379,7 +380,7 @@ const handleLogin = () => {
   transition: color 0.3s;
 }
 
-.input-wrapper input {
+.login-input-wrapper input {
   width: 100%;
   padding: 0.85rem 1rem 0.85rem 3.2rem;
   border: 2px solid #e2e8f0;
@@ -391,19 +392,19 @@ const handleLogin = () => {
   color: #1e293b;
 }
 
-.input-wrapper input::placeholder {
+.login-input-wrapper input::placeholder {
   color: #cbd5e1;
 }
 
-.input-wrapper input:focus {
+.login-input-wrapper input:focus {
   outline: none;
   border-color: #2d7a34;
   background-color: white;
   box-shadow: 0 0 0 4px rgba(45, 122, 52, 0.08);
 }
 
-.input-wrapper input:focus + .field-icon,
-.input-wrapper:focus-within .field-icon {
+.login-input-wrapper input:focus + .field-icon,
+.login-input-wrapper:focus-within .field-icon {
   color: #2d7a34;
 }
 
