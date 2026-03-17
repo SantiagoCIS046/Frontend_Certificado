@@ -1,6 +1,6 @@
 <template>
   <div class="certificates-container">
-    <!-- Top Navigation Bar -->
+    <!-- Barra de Navegación Superior -->
     <header class="navbar">
       <div class="nav-left">
         <div class="brand">
@@ -30,7 +30,7 @@
             </div>
           </div>
 
-          <!-- Profile Dropdown -->
+          <!-- Menú Desplegable de Perfil -->
           <div v-if="isUserMenuOpen" class="user-dropdown">
             <button class="dropdown-item" @click="handleEditProfile">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
@@ -47,7 +47,7 @@
     </header>
 
     <main class="page-main">
-      <!-- Header Row -->
+      <!-- Fila de Encabezado -->
       <div class="page-header">
         <div class="title-section">
           <h1 class="page-title">Reportes de Cumplimiento</h1>
@@ -67,10 +67,10 @@
             Sincronizar Drive
           </button>
         </div>
-      </div>      <!-- Filters Bar -->
+      </div>      <!-- Barra de Filtros -->
       <div class="filters-bar">
         <div class="filter-group">
-          <!-- Date Filter -->
+          <!-- Filtro de Fecha -->
           <div class="filter-item-wrapper">
             <button class="filter-btn" @click="toggleDateMenu">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
@@ -94,7 +94,7 @@
             </div>
           </div>
 
-          <!-- Contractor Filter -->
+          <!-- Filtro de Contratista -->
           <div class="filter-item-wrapper">
             <button class="filter-btn" @click="toggleContractorMenu">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -124,7 +124,7 @@
             </div>
           </div>
 
-          <!-- Platform Filter -->
+          <!-- Filtro de Plataforma -->
           <div class="filter-item-wrapper">
             <button class="filter-btn" @click="togglePlatformMenu">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
@@ -148,7 +148,7 @@
             </div>
           </div>
 
-          <!-- Status Filter -->
+          <!-- Filtro de Estado -->
           <div class="filter-item-wrapper">
             <button class="filter-btn" @click="toggleStatusMenu">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
@@ -173,7 +173,7 @@
           </div>
         </div>
 
-        <!-- Global Search Bar -->
+        <!-- Barra de Búsqueda Global -->
         <div class="search-bar-wrapper">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           <input 
@@ -190,7 +190,7 @@
         </button>
       </div>
 
-      <!-- Main Table Card -->
+      <!-- Tarjeta de Tabla Principal -->
       <div class="table-card">
         <table class="data-table">
           <thead>
@@ -230,7 +230,7 @@
               </td>
               <td>
                 <button class="btn-visualize" @click="handleVisualize(item)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75(0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z"/><circle cx="12" cy="12" r="3"/></svg>
                   <span>Visualizar</span>
                 </button>
               </td>
@@ -243,7 +243,7 @@
           </tbody>
         </table>
 
-        <!-- Table Footer/Pagination -->
+        <!-- Pie de Tabla/Paginación -->
         <div class="table-footer">
           <span class="results-info">
             Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} a {{ Math.min(currentPage * itemsPerPage, filteredCertificates.length) }} de {{ filteredCertificates.length }} resultados
@@ -264,7 +264,7 @@
         </div>
       </div>
 
-      <!-- Stats Grid -->
+      <!-- Cuadrícula de Estadísticas -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon green">
@@ -295,7 +295,7 @@
         </div>
       </div>
 
-      <!-- View Form Modal -->
+      <!-- Modal de Visualización de Formulario -->
       <div v-if="isViewModalOpen" class="modal-overlay form-modal-overlay" @click.self="isViewModalOpen = false">
         <div class="form-modal-container">
           <SoiForm 
@@ -325,7 +325,7 @@
         </div>
       </div>
 
-      <!-- Edit Profile Modal -->
+      <!-- Modal de Edición de Perfil -->
       <div v-if="isEditProfileModalOpen" class="modal-overlay" @click.self="closeEditProfileModal">
         <div class="modal-card">
           <div class="modal-header">
@@ -371,7 +371,7 @@
         </div>
       </div>
 
-      <!-- Drive Sync Modal -->
+      <!-- Modal de Sincronización de Drive -->
       <div v-if="isDriveModalOpen" class="modal-overlay" @click.self="closeDriveModal">
         <div class="modal-card">
           <div class="modal-header">
@@ -410,7 +410,7 @@
       </div>
     </main>
 
-    <!-- Footer -->
+    <!-- Pie de Página -->
     <footer class="page-footer">
       <div class="footer-left">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -435,9 +435,14 @@ import AsopagosForm from '../components/AsopagosForm.vue';
 import CompensarForm from '../components/CompensarForm.vue';
 import AportesForm from '../components/AportesForm.vue';
 import { notify } from '../utils/notifications';
+import { reportService } from '../services/reportService';
+import { authService } from '../services/authService';
+import { supervisorService } from '../services/supervisorService';
 
-const router = useRouter();
-const userName = ref('Usuario');
+const authStore = useAuthStore();
+const userName = computed(() => authStore.user?.name || 'Usuario');
+
+// Estado de la Interfaz de Usuario (UI)
 const isUserMenuOpen = ref(false);
 const isDateMenuOpen = ref(false);
 const isContractorMenuOpen = ref(false);
@@ -451,13 +456,13 @@ const filterPlatform = ref('');
 const filterStatus = ref('');
 const searchQuery = ref('');
 
-// Google Drive Sync State
+// Estado de Sincronización con Google Drive
 const isDriveModalOpen = ref(false);
 const isSyncingToDrive = ref(false);
 const driveEmail = ref('');
 const lastSyncTime = ref('');
 
-// Visualization Modal State
+// Estado del Modal de Visualización
 const isViewModalOpen = ref(false);
 const selectedItemForView = ref(null);
 
@@ -466,6 +471,7 @@ const handleVisualize = (item) => {
   isViewModalOpen.value = true;
 };
 
+// Métodos para Alternar Elementos de la UI
 const toggleUserMenu = () => {
   isUserMenuOpen.value = !isUserMenuOpen.value;
   if (isUserMenuOpen.value) {
@@ -548,61 +554,112 @@ const closeEditProfileModal = () => {
   profileData.value.confirmPassword = '';
 };
 
-const saveProfileChanges = () => {
-  if (profileData.value.password || profileData.value.confirmPassword) {
-    if (profileData.value.password !== profileData.value.confirmPassword) {
-      notify('Las contraseñas no coinciden.', 'error');
-      return;
+const saveProfileChanges = async () => {
+  try {
+    const payload = {
+      name: userName.value,
+      email: authStore.user?.email || localStorage.getItem('userEmail')
+    };
+    
+    if (profileData.value.password) {
+      if (profileData.value.password !== profileData.value.confirmPassword) {
+        notify('Las contraseñas no coinciden.', 'error');
+        return;
+      }
+      payload.password = profileData.value.password;
     }
-    localStorage.setItem('userPassword', profileData.value.password);
+    
+    await supervisorService.updateProfile(payload);
+    notify('Perfil actualizado correctamente.');
+    closeEditProfileModal();
+  } catch (error) {
+    notify('Error al actualizar el perfil.', 'error');
   }
-  
-  if (userName.value.trim() !== '') {
-    localStorage.setItem('userName', userName.value);
+};
+
+const certificates = ref([]);
+const loadingCertificates = ref(false);
+const supervisorProfile = ref(null);
+
+const fetchCertificates = async () => {
+  loadingCertificates.value = true;
+  try {
+    const data = await reportService.getCertificates();
+    const list = data.reports || data;
+    certificates.value = list.map(item => ({
+      id: item._id,
+      persona: item.fullName || 'Sin nombre',
+      date: item.createdAt
+        ? new Date(item.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
+        : 'Sin fecha',
+      name: (item.supervisor && item.supervisor.name) || item.supervisorName || 'S/N',
+      cedula: item.documentNumber || '',
+      initials: item.fullName
+        ? item.fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
+        : '??',
+      platform: item.platform
+        ? item.platform.charAt(0).toUpperCase() + item.platform.slice(1).replace(/_/g, ' ')
+        : 'N/A',
+      status: item.status === 'completed' ? 'Aprobado' : item.status === 'pending' ? 'Pendiente' : 'No aprobado',
+      platformData: item.platformData || {}
+    }));
+  } catch (error) {
+    console.error('Error fetching certificates:', error);
+    certificates.value = [];
+    if (error.response?.status !== 401) {
+      notify('Error al cargar los reportes.', 'error');
+    }
+  } finally {
+    loadingCertificates.value = false;
   }
-  
-  notify('Perfil actualizado correctamente.', 'success');
-  closeEditProfileModal();
+};
+
+const fetchProfile = async () => {
+  try {
+    const profile = await supervisorService.getProfile();
+    supervisorProfile.value = profile;
+    if (profile.name) authStore.user.name = profile.name;
+    if (profile.folderId) driveEmail.value = profile.folderId;
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+  }
 };
 
 const handleLogout = () => {
-  localStorage.removeItem('userName');
-  router.push('/dashboard');
+  authService.logout();
+  router.push('/login');
 };
+
+onMounted(() => {
+  fetchProfile();
+  fetchCertificates();
+});
 
 const currentPage = ref(1);
 const itemsPerPage = ref(5);
 
-const certificates = ref([
-  { id: '1290', persona: 'Santiago Pérez', date: '01 Oct, 2023', name: 'Instructores', cedula: '1098765432', initials: 'IN', platform: 'SOI', status: 'Aprobado' },
-  { id: '1289', persona: 'María García', date: '02 Oct, 2023', name: 'Apoyo administrativo', cedula: '1087654321', initials: 'AA', platform: 'Asopagos', status: 'No aprobado' },
-  { id: '1288', persona: 'Carlos Ruiz', date: '05 Oct, 2023', name: 'Profesionales', cedula: '1076543210', initials: 'PR', platform: 'SOI', status: 'Aprobado' },
-  { id: '1287', persona: 'Elena López', date: '07 Oct, 2023', name: 'Tecnología', initials: 'TE', cedula: '1065432109', platform: 'Asopagos', status: 'Aprobado' },
-  { id: '1286', persona: 'Andrés Castro', date: '10 Oct, 2023', name: 'Bienestar', initials: 'BI', cedula: '1054321098', platform: 'SOI', status: 'No aprobado' },
-  { id: '1285', persona: 'Paula Ortiz', date: '12 Oct, 2023', name: 'Gestión documental', cedula: '1043210987', initials: 'GD', platform: 'Asopagos', status: 'Aprobado' },
-  { id: '1284', persona: 'Javier Rocha', date: '14 Oct, 2023', name: 'Instructores', cedula: '1032109876', initials: 'IN', platform: 'Compensar', status: 'Aprobado' },
-  { id: '1283', persona: 'Laura Vaca', date: '15 Oct, 2023', name: 'Profesionales', cedula: '1021098765', initials: 'PR', platform: 'Aportes', status: 'Aprobado' },
-  { id: '1282', persona: 'Ricardo Silva', date: '16 Oct, 2023', name: 'Tecnología', cedula: '1010987654', initials: 'TE', platform: 'SOI', status: 'No aprobado' },
-  { id: '1281', persona: 'Monica Diaz', date: '18 Oct, 2023', name: 'Bienestar', cedula: '1009876543', initials: 'BI', platform: 'Asopagos', status: 'Aprobado' }
-]);
-
-// Helper to parse "DD Mon, YYYY" (e.g., "01 Oct, 2023")
+// Ayudante para parsear "DD Mon, YYYY" (ej., "01 Oct, 2023")
 const parseItemDate = (dateStr) => {
-  const months = {
-    Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-    Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
-  };
-  const parts = dateStr.replace(',', '').split(' ');
-  const day = parseInt(parts[0]);
-  const month = months[parts[1]];
-  const year = parseInt(parts[2]);
-  return new Date(year, month, day);
+  // Si la fecha ya está en formato local "16 de mar de 2026", necesitamos un mejor parser o usar la fecha original
+  // Por ahora, asumimos que podría ser ISO o el formato de visualización
+  const parts = dateStr.split(' ');
+  if (parts.length === 3) { // Asumir "01 Oct, 2023"
+    const months = {
+      Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+      Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
+    };
+    const day = parseInt(parts[0]);
+    const month = months[parts[1].replace(',', '')];
+    const year = parseInt(parts[2]);
+    return new Date(year, month, day);
+  }
+  return new Date(dateStr);
 };
 
 const filteredCertificates = computed(() => {
   let result = certificates.value;
 
-  // Global Search (Name, Cedula, Platform)
+  // Búsqueda Global (Nombre, Cédula, Plataforma)
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
     result = result.filter(item => 
@@ -612,22 +669,22 @@ const filteredCertificates = computed(() => {
     );
   }
 
-  // Filter by Contractor
+  // Filtrar por Contratista
   if (selectedContractor.value) {
     result = result.filter(item => item.name === selectedContractor.value);
   }
 
-  // Filter by Platform
+  // Filtrar por Plataforma
   if (filterPlatform.value) {
     result = result.filter(item => item.platform.toLowerCase() === filterPlatform.value.toLowerCase());
   }
 
-  // Filter by Status
+  // Filtrar por Estado
   if (filterStatus.value) {
     result = result.filter(item => item.status === filterStatus.value);
   }
 
-  // Filter by Date
+  // Filtrar por Fecha
   if (filterDateStart.value || filterDateEnd.value) {
     const start = filterDateStart.value ? new Date(filterDateStart.value) : null;
     const end = filterDateEnd.value ? new Date(filterDateEnd.value) : null;
@@ -676,7 +733,7 @@ const goToPage = (page) => {
   currentPage.value = page;
 };
 
-// Reset page when filters change
+// Reiniciar página cuando cambian los filtros
 watch([searchQuery, selectedContractor, filterPlatform, filterStatus, filterDateStart, filterDateEnd], () => {
   currentPage.value = 1;
 });
@@ -716,10 +773,10 @@ const handleExportExcel = () => {
     return;
   }
 
-  // Headers for CSV
+  // Encabezados para CSV
   const headers = ['Fecha de Solicitud', 'ID (Cédula)', 'Nombre', 'Contratista', 'Plataforma', 'Estado'];
   
-  // Map data to rows
+  // Mapear datos a filas
   const rows = filteredCertificates.value.map(item => [
     item.date,
     item.cedula,
@@ -729,13 +786,13 @@ const handleExportExcel = () => {
     item.status
   ]);
 
-  // Combined CSV content with BOM for UTF-8 (Excel friendly)
+  // Contenido CSV combinado con BOM para UTF-8 (amigable para Excel)
   const csvContent = "\uFEFF" + [
     headers.join(','),
     ...rows.map(row => row.join(','))
   ].join('\n');
 
-  // Create blob and download link
+  // Crear blob y enlace de descarga
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
@@ -758,21 +815,21 @@ const handleExportPDF = (specificItem = null) => {
   
   const doc = new jsPDF();
   
-  // Add title
+  // Agregar título
   doc.setFontSize(18);
   const title = specificItem ? `Formulario de Contratista - ${specificItem.persona}` : 'Reporte de Cumplimiento de Certificados';
   doc.text(title, 14, 22);
   doc.setFontSize(11);
   doc.setTextColor(100);
   
-  // Add metadata
+  // Agregar metadatos
   const date = new Date().toLocaleDateString();
   doc.text(`Fecha de generación: ${date}`, 14, 30);
   if (!specificItem) {
     doc.text(`Total de registros: ${dataToExport.length}`, 14, 36);
   }
   
-  // Generate Table
+  // Generar Tabla
   const tableColumn = ["Fecha", "ID (Cédula)", "Nombre", "Contratista", "Plataforma", "Estado"];
   const tableRows = dataToExport.map(item => [
     item.date,
@@ -792,7 +849,7 @@ const handleExportPDF = (specificItem = null) => {
     styles: { fontSize: 9 }
   });
 
-  // Download the PDF
+  // Descargar el PDF
   const filename = specificItem ? `formulario_${specificItem.cedula}.pdf` : 'reporte_certificados.pdf';
   doc.save(filename);
 };
@@ -820,7 +877,7 @@ const confirmDriveExport = () => {
 
   isSyncingToDrive.value = true;
   
-  // Simulate API call to Google Drive
+  // Simular llamada a la API de Google Drive
   setTimeout(() => {
     isSyncingToDrive.value = false;
     isDriveModalOpen.value = false;
@@ -888,7 +945,7 @@ onMounted(() => {
   zoom: 0.8;
 }
 
-/* Navbar */
+/* Barra de Navegación */
 .navbar {
   height: 52px; /* Reduced from 60px */
   background-color: white;
@@ -1045,7 +1102,7 @@ onMounted(() => {
   color: #64748b;
 }
 
-/* User Dropdown Style */
+/* Estilo del Menú Desplegable de Usuario */
 .user-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -1108,7 +1165,7 @@ onMounted(() => {
   justify-content: center;
 }
 
-/* Page Main */
+/* Contenido Principal de la Página */
 .page-main {
   max-width: 1200px;
   margin: 0 auto;
@@ -1119,7 +1176,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem; /* Matches hero-section */
+  margin-bottom: 2rem; /* Coincide con hero-section */
 }
 
 .page-title {
@@ -1146,9 +1203,9 @@ onMounted(() => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.55rem 1.25rem; /* Reduced from 0.75rem 1.5rem */
-  border-radius: 10px; /* Reduced from 12px */
+  border-radius: 10px; /* Reducido de 12px */
   font-weight: 700;
-  font-size: 0.8rem; /* Reduced from 0.9rem */
+  font-size: 0.8rem; /* Reducido de 0.9rem */
   cursor: pointer;
   border: none;
   transition: all 0.2s;
@@ -1190,7 +1247,7 @@ onMounted(() => {
   to { transform: rotate(360deg); }
 }
 
-/* Filters Bar */
+/* Barra de Filtros */
 .filters-bar {
   display: flex;
   justify-content: space-between;
@@ -1247,7 +1304,7 @@ onMounted(() => {
   margin-left: auto;
 }
 
-/* Date Picker Dropdown */
+/* Desplegable del Selector de Fecha */
 .date-picker-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -1316,7 +1373,7 @@ onMounted(() => {
   cursor: pointer;
 }
 
-/* Contractor Filter Dropdown */
+/* Desplegable del Filtro de Contratista */
 .contractor-picker-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -1390,7 +1447,7 @@ onMounted(() => {
   color: #16a34a;
 }
 
-/* Platform Filter Dropdown */
+/* Desplegable del Filtro de Plataforma */
 .platform-picker-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -1429,7 +1486,7 @@ onMounted(() => {
   color: #16a34a;
 }
 
-/* Status Filter Dropdown */
+/* Desplegable del Filtro de Estado */
 .status-picker-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -1468,7 +1525,7 @@ onMounted(() => {
   color: #16a34a;
 }
 
-/* Global Search Bar */
+/* Barra de Búsqueda Global */
 .search-bar-wrapper {
   position: relative;
   flex: 1;
@@ -1549,7 +1606,7 @@ onMounted(() => {
   opacity: 1;
 }
 
-/* Table Card */
+/* Tarjeta de Tabla */
 .table-card {
   background-color: white;
   border-radius: 20px;
@@ -1566,8 +1623,8 @@ onMounted(() => {
 
 .data-table th {
   text-align: left;
-  padding: 0.85rem 1.25rem; /* Reduced from 1.25rem 1.5rem */
-  font-size: 0.7rem; /* Reduced from 0.75rem */
+  padding: 0.85rem 1.25rem; /* Reducido de 1.25rem 1.5rem */
+  font-size: 0.7rem; /* Reducido de 0.75rem */
   font-weight: 800;
   color: #64748b;
   background-color: #f8fafc;
@@ -1576,9 +1633,9 @@ onMounted(() => {
 }
 
 .data-table td {
-  padding: 0.85rem 1.25rem; /* Reduced from 1.25rem 1.5rem */
+  padding: 0.85rem 1.25rem; /* Reducido de 1.25rem 1.5rem */
   border-bottom: 1px solid #f1f5f9;
-  font-size: 0.85rem; /* Reduced from 0.9rem */
+  font-size: 0.85rem; /* Reducido de 0.9rem */
 }
 
 .id-cell {
@@ -1668,7 +1725,7 @@ onMounted(() => {
   color: #0f172a;
 }
 
-/* Table Footer */
+/* Pie de Tabla */
 .table-footer {
   padding: 1rem 1.5rem;
   display: flex;
@@ -1705,7 +1762,7 @@ onMounted(() => {
   border-color: #22c55e;
 }
 
-/* Stats Cards */
+/* Tarjetas de Estadísticas */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1714,17 +1771,17 @@ onMounted(() => {
 
 .stat-card {
   background-color: white;
-  padding: 1.25rem; /* Reduced from 1.5rem */
-  border-radius: 16px; /* Reduced from 20px */
+  padding: 1.25rem; /* Reducido de 1.5rem */
+  border-radius: 16px; /* Reducido de 20px */
   display: flex;
   align-items: center;
-  gap: 1.25rem; /* Reduced from 1.5rem */
+  gap: 1.25rem; /* Reducido de 1.5rem */
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
 .stat-icon {
-  width: 42px; /* Reduced from 48px */
-  height: 42px; /* Reduced */
+  width: 42px; /* Reducido de 48px */
+  height: 42px; /* Reducido */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1741,14 +1798,14 @@ onMounted(() => {
 }
 
 .stat-label {
-  font-size: 0.65rem; /* Reduced from 0.7rem */
+  font-size: 0.65rem; /* Reducido de 0.7rem */
   font-weight: 800;
   color: #94a3b8;
   letter-spacing: 0.05em;
 }
 
 .stat-value {
-  font-size: 1.3rem; /* Reduced from 1.5rem */
+  font-size: 1.3rem; /* Reducido de 1.5rem */
   font-weight: 900;
 }
 
@@ -1758,7 +1815,7 @@ onMounted(() => {
   .stats-grid { grid-template-columns: 1fr; }
 }
 
-/* Footer Style */
+/* Estilo del Pie de Página */
 .page-footer {
   margin-top: auto;
   padding: 3rem 4rem;
@@ -1793,7 +1850,7 @@ onMounted(() => {
 
 .footer-links a:hover { color: #0f172a; }
 
-/* Modal Styles */
+/* Estilos de Modales */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -1999,7 +2056,7 @@ onMounted(() => {
 
 
 
-/* Visualization Modal Special Styles */
+/* Estilos Especiales del Modal de Visualización */
 .form-modal-overlay {
   z-index: 2000;
   display: flex;

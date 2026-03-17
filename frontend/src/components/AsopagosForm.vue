@@ -11,7 +11,7 @@
     </div>
 
     <div class="form-content">
-      <!-- Section: Contratista -->
+      <!-- Sección: Contratista -->
       <section class="form-section">
         <div class="section-header">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="section-icon"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -56,7 +56,7 @@
         </div>
       </section>
 
-      <!-- Section: Detalle Asopagos -->
+      <!-- Sección: Detalle Asopagos -->
       <section class="detail-box">
         <div class="section-header">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="section-icon"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
@@ -102,7 +102,7 @@
             <div class="select-wrapper">
               <select v-model="formData.supervisorId" :disabled="readOnly || loadingSupervisors">
                 <option value="" disabled>{{ loadingSupervisors ? 'Cargando supervisores...' : 'Seleccione el supervisor...' }}</option>
-                <option v-for="s in supervisors" :key="s._id" :value="s._id">{{ s.fullName }}</option>
+                <option v-for="s in supervisors" :key="s._id" :value="s._id">{{ s.name }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -202,20 +202,19 @@ const handleSend = async () => {
       fullName: formData.fullName,
       eps: formData.eps,
       supervisorId: formData.supervisorId,
-      reportMonth: formData.reportMonth,
-      reportYear: formData.reportYear,
       platform: 'asopagos',
       platformData: {
         mes: String(formData.reportMonth).padStart(2, '0'),
-        anio: String(formData.reportYear)
+        anio: String(formData.reportYear),
+        tipoCertificado: formData.certType
       }
     };
 
     await reportService.createReport(payload);
-    notify('Su solicitud de Asopagos ha sido enviada correctamente.');
+    notify('Solicitud enviada al servidor correctamente.');
     emit('success', payload);
   } catch (error) {
-    notify('Error al enviar la solicitud. Intente nuevamente.', 'error');
+    notify('Error al conectar con el servidor', 'error');
   } finally {
     sending.value = false;
   }

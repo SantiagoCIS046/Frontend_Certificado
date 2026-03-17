@@ -2,9 +2,9 @@
   <div class="dashboard-container">
 
 
-    <!-- Page Content -->
+    <!-- Contenido de la Página -->
     <main class="page-main">
-      <!-- Hero Section -->
+      <!-- Sección Hero (Encabezado) -->
       <section class="hero-section">
         <div class="hero-left">
           <h1 class="hero-title">Panel de Control de <br><span class="accent-text">Seguridad Social</span></h1>
@@ -14,7 +14,7 @@
 
 
 
-      <!-- Action Cards Section -->
+      <!-- Sección de Tarjetas de Acción -->
       <section class="action-cards-grid">
         <div class="action-card form-card">
           <div class="card-visual-side green">
@@ -26,13 +26,13 @@
             <h2 class="card-title">Llenar Formulario</h2>
             <p class="card-text">Complete nuevas solicitudes de certificados de seguridad social de forma digital.</p>
             
-            <!-- Default Feature List -->
+            <!-- Lista de Características por Defecto -->
             <ul v-if="!showPlatforms" class="feature-list">
               <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Validación automática de datos</li>
               <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Guardado automático de borradores</li>
             </ul>
 
-            <!-- Platform Selection List -->
+            <!-- Lista de Selección de Plataforma -->
             <div v-else class="platform-mini-list">
               <div 
                 v-for="platform in platforms" 
@@ -81,7 +81,7 @@
         </div>
       </section>
 
-      <!-- Conditional Table or Form Section -->
+      <!-- Sección Condicional de Tabla o Formulario -->
       <section v-if="activeForm === 'soi' || activeForm === 'asopagos' || activeForm === 'compensar' || activeForm === 'aportes'" class="form-embedded-container">
         <SoiForm v-if="activeForm === 'soi'" @cancel="activeForm = null" />
         <AsopagosForm v-if="activeForm === 'asopagos'" @cancel="activeForm = null" />
@@ -108,9 +108,13 @@ import asopagosLogo from '../assets/platforms/asopagos_logo.png';
 import compensarLogo from '../assets/platforms/compensar_logo.png';
 import aportesLogo from '../assets/platforms/aportes_logo.png';
 import { notify } from '../utils/notifications';
+import { authService } from '../services/authService';
+
+import { useAuthStore } from '../store/auth';
 
 const router = useRouter();
-const userName = ref('Usuario');
+const authStore = useAuthStore();
+const userName = computed(() => authStore.user?.name || 'Usuario');
 const activeForm = ref(null);
 const showPlatforms = ref(false);
 const selectedPlatform = ref(null);
@@ -126,7 +130,7 @@ const handleEditProfile = () => {
 };
 
 const handleLogout = () => {
-  localStorage.removeItem('userName');
+  authService.logout();
   router.push('/login');
 };
 
@@ -156,10 +160,7 @@ const handleFormAction = () => {
 };
 
 onMounted(() => {
-  const savedName = localStorage.getItem('userName');
-  if (savedName) {
-    userName.value = savedName;
-  }
+  // authStore se inicializa desde el localStorage en su definición
 });
 </script>
 
@@ -176,7 +177,7 @@ onMounted(() => {
   zoom: 0.8;
 }
 
-/* Navbar Style */
+/* Estilo de la Barra de Navegación */
 .navbar {
   height: 52px; /* Reduced from 64px */
   background-color: white;
@@ -323,7 +324,7 @@ onMounted(() => {
   color: #64748b;
 }
 
-/* User Dropdown Style */
+/* Estilo del Menú Desplegable de Usuario */
 .user-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -386,7 +387,7 @@ onMounted(() => {
   justify-content: center;
 }
 
-/* Hero Section Style */
+/* Estilo de la Sección Hero */
 .page-main {
   padding: 1.5rem 2rem; /* Reduced from 2rem 4rem */
   max-width: 1200px;
@@ -444,7 +445,7 @@ onMounted(() => {
 
 
 
-/* Action Cards Style */
+/* Estilo de las Tarjetas de Acción */
 .action-cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -515,7 +516,7 @@ onMounted(() => {
   gap: 0.5rem; /* Reduced */
 }
 
-/* Platform Mini List */
+/* Mini Lista de Plataformas */
 .platform-mini-list {
   display: flex;
   flex-direction: column;
@@ -626,7 +627,7 @@ onMounted(() => {
 .btn-action.secondary { background-color: #0f172a; color: white; }
 .btn-action.secondary:hover { background-color: #1e293b; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25); }
 
-/* Embedded Form Container */
+/* Contenedor de Formulario Embebido */
 .form-embedded-container {
   background-color: white;
   border-radius: 24px;
@@ -636,7 +637,7 @@ onMounted(() => {
   overflow: hidden;
 }
 
-/* Footer Style */
+/* Estilo del Pie de Página */
 .page-footer {
   margin-top: auto;
   padding: 3rem 4rem;

@@ -97,7 +97,7 @@
             <div class="select-wrapper">
               <select v-model="formData.supervisorId" :disabled="readOnly || loadingSupervisors">
                 <option value="" disabled>{{ loadingSupervisors ? 'Cargando supervisores...' : 'Seleccione el supervisor...' }}</option>
-                <option v-for="s in supervisors" :key="s._id" :value="s._id">{{ s.fullName }}</option>
+                <option v-for="s in supervisors" :key="s._id" :value="s._id">{{ s.name }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -192,15 +192,13 @@ const handleSend = async () => {
 
   sending.value = true;
   try {
-    // Estructura según Guía de Integración
+    // Estructura según Guía de Integración final
     const payload = {
       documentType: formData.documentType,
       documentNumber: formData.documentNumber,
       fullName: formData.fullName,
       eps: formData.eps,
       supervisorId: formData.supervisorId,
-      reportMonth: formData.reportMonth,
-      reportYear: formData.reportYear,
       platform: 'soi',
       platformData: {
         mes: String(formData.reportMonth),
@@ -209,10 +207,10 @@ const handleSend = async () => {
     };
 
     await reportService.createReport(payload);
-    notify('Su solicitud ha sido enviada al supervisor correctamente.');
+    notify('Solicitud enviada al servidor correctamente.');
     emit('success', payload);
   } catch (error) {
-    notify('Error al enviar la solicitud. Intente nuevamente.', 'error');
+    notify('Error al conectar con el servidor', 'error');
   } finally {
     sending.value = false;
   }

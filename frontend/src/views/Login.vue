@@ -2,49 +2,51 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { notify } from '../utils/notifications'
+import { authService } from '../services/authService'
 
 const router = useRouter()
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
 const showPassword = ref(false)
+const loading = ref(false)
 
-const handleLogin = () => {
-  if (email.value && password.value) {
-    const savedPassword = localStorage.getItem('userPassword');
-    
-    if (savedPassword && password.value !== savedPassword) {
-      notify('Contraseña incorrecta.', 'error');
-      return;
-    }
+const handleLogin = async () => {
+  if (!email.value || !password.value) {
+    notify('Por favor, ingrese sus credenciales.', 'error');
+    return;
+  }
 
-    // Save user info to simulate session
-    if (!localStorage.getItem('userName')) {
-      const name = email.value.split('@')[0];
-      localStorage.setItem('userName', name.charAt(0).toUpperCase() + name.slice(1));
+  loading.value = true;
+  try {
+    const result = await authService.login(email.value, password.value);
+    if (result.success) {
+      notify('Bienvenido al sistema.');
+      router.push('/certificados');
+    } else {
+      notify(result.message || 'Error en la autenticación.', 'error');
     }
-    
-    // Redirigir al dashboard después del "login" (simulado para frontend)
-    router.push('/certificados')
-  } else {
-    notify('Por favor, ingrese sus credenciales.', 'error')
+  } catch (error) {
+    notify('Error al conectar con el servidor.', 'error');
+  } finally {
+    loading.value = false;
   }
 }
 </script>
 
 <template>
   <div class="login-wrapper">
-    <!-- Dynamic Background Elements -->
+    <!-- Elementos decorativos de fondo dinámicos -->
     <div class="bg-decoration">
       <div class="circle circle-1"></div>
       <div class="circle circle-2"></div>
       <div class="grid-pattern"></div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Contenido Principal -->
     <main class="main-container">
       <div class="login-card fade-in">
-        <!-- Left Side: Info (Green) -->
+        <!-- Lado Izquierdo: Información (Verde) -->
         <div class="login-info">
           <div class="info-overlay"></div>
           <div class="info-content slide-up">
@@ -79,7 +81,7 @@ const handleLogin = () => {
           </div>
         </div>
 
-        <!-- Right Side: Form (White) -->
+        <!-- Lado Derecho: Formulario (Blanco) -->
         <div class="login-form-container">
           <form @submit.prevent="handleLogin" class="login-form slide-up-delayed">
             <div class="form-header">
@@ -134,9 +136,10 @@ const handleLogin = () => {
               <a href="#" class="forgot-link">¿Olvidó su contraseña?</a>
             </div>
 
-            <button type="submit" class="submit-btn primary-pulse">
-              <span>Iniciar Sesión</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            <button type="submit" class="submit-btn primary-pulse" :disabled="loading">
+              <span>{{ loading ? 'Iniciando...' : 'Iniciar Sesión' }}</span>
+              <span v-if="loading" class="spinner-small" style="margin-left: 10px;"></span>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
 
             <div class="security-disclaimer">
@@ -162,7 +165,7 @@ const handleLogin = () => {
   overflow: hidden;
 }
 
-/* Background Decorations */
+/* Decoraciones de Fondo */
 .bg-decoration {
   position: absolute;
   top: 0;
@@ -204,7 +207,7 @@ const handleLogin = () => {
   opacity: 0.2;
 }
 
-/* Main Container */
+/* Contenedor Principal */
 .main-container {
   position: relative;
   z-index: 10;
@@ -220,17 +223,17 @@ const handleLogin = () => {
   max-width: 820px;
   height: 520px;
   display: flex;
-  background: transparent; /* Main container is transparent to allow children to define look */
+  background: transparent; /* El contenedor principal es transparente para permitir que los hijos definan el aspecto */
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Left Side: Info */
+/* Lado Izquierdo: Información */
 .login-info {
   flex: 4;
-  background: linear-gradient(145deg, #1e5223 0%, #2d7a34 100%); /* Solid green back as original */
+  background: linear-gradient(145deg, #1e5223 0%, #2d7a34 100%); /* Fondo verde sólido como el original */
   color: white;
   padding: 2.5rem;
   display: flex;
@@ -322,7 +325,7 @@ const handleLogin = () => {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Right Side: Form */
+/* Lado Derecho: Formulario */
 .login-form-container {
   flex: 6;
   padding: 2.5rem 3.5rem;
@@ -349,7 +352,7 @@ const handleLogin = () => {
 }
 
 .form-subtitle {
-  color: rgba(255, 255, 255, 0.8); /* Light color for transparency */
+  color: rgba(255, 255, 255, 0.8); /* Color claro para transparencia */
   font-size: 0.88rem;
   font-weight: 500;
 }
@@ -443,12 +446,12 @@ const handleLogin = () => {
   width: 16px;
   height: 16px;
   cursor: pointer;
-  accent-color: #2d7a34; /* Custom checkbox color */
+  accent-color: #2d7a34; /* Color personalizado para el checkbox */
 }
 
 .forgot-link {
   font-size: 0.85rem;
-  color: #4ade80; /* Brighter green for contrast on dark background */
+  color: #4ade80; /* Verde más brillante para contraste en fondo oscuro */
   font-weight: 700;
   transition: all 0.2s;
   text-decoration: none;
@@ -496,7 +499,7 @@ const handleLogin = () => {
   font-weight: 500;
 }
 
-/* Animations */
+/* Animaciones */
 .fade-in {
   animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -527,7 +530,7 @@ const handleLogin = () => {
 }
 
 .primary-pulse:hover {
-  animation: none; /* Can add subtle interaction here */
+  animation: none; /* Se puede agregar interacción sutil aquí */
 }
 
 @media (max-width: 900px) {

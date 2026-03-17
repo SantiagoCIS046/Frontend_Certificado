@@ -1,13 +1,29 @@
-import api from './api';
+import axiosInstance from '../plugins/axios';
 
 export const reportService = {
   /**
-   * Register a new report request in the backend.
-   * @param {Object} reportData - The report structure following the integration guide.
-   * @returns {Promise}
+   * Registrar una nueva solicitud de reporte en el backend.
    */
   createReport: async (reportData) => {
-    const response = await api.post('/reports', reportData);
+    const response = await axiosInstance.post('/rep', reportData);
     return response.data;
-  }
+  },
+
+  /**
+   * Obtener historial de reportes desde el backend.
+   */
+  getCertificates: async (page = 1, limit = 50) => {
+    const response = await axiosInstance.get('/certificates', {
+      params: { page, limit }
+    });
+    return response.data;
+  },
+
+  /**
+   * Obtener estadísticas del tablero desde el backend.
+   */
+  getStats: async () => {
+    const response = await axiosInstance.get('/stats');
+    return response.data;
+  },
 };

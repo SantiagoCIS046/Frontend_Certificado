@@ -64,23 +64,34 @@ Estos componentes encapsulan la lógica de captura de datos según la entidad de
 
 ---
 
+---
+
 ## 4. Servicios y Utilidades (`src/services/` & `src/utils/`)
 
 ### `reportService.js`
-- **`createReport(data)`**: Realiza la petición `POST /api/reports` para registrar una nueva solicitud.
+- **`createReport(data)`**: Simula el registro de una nueva solicitud (Mock).
+- **`getCertificates()`**: Retorna una lista predefinida de certificados para demostración.
 
 ### `supervisorService.js`
-- **`getSupervisors()`**: Obtiene la lista de supervisores autorizados desde el backend.
+- **`getSupervisors()`**: Retorna una lista de supervisores simulados.
 
-### `notifications.js`
+### `utils/notifications.js`
 - **`notify(message, type)`**: Función global que activa el visualizador de `SuccessAlert.vue` con un mensaje y estilo específico (success/error).
 
 ---
 
-## 5. Conexión con el Backend
+## 5. Estado Standalone
 
-El sistema está diseñado para ser conectado fácilmente a una API REST:
-1. **Axios Config**: En `src/services/api.js` se define la `baseURL`.
-2. **Payloads**: Los formularios envían un objeto JSON estandarizado que incluye `documentType`, `documentNumber`, `fullName`, `eps`, `supervisorId` y `platformData`.
+El frontend está configurado para funcionar de manera independiente:
+1. **Sin Backend**: No se requiere de una API activa. Los servicios en `src/services/` consumen y retornan datos simulados.
+2. **Sin Axios**: Se ha eliminado la dependencia de `axios` para simplificar la estructura.
+3. **Persistencia**: El estado de autenticación se gestiona a través de una store de Pinia y se persiste en `localStorage`.
 
-Para más detalles sobre la estructura del JSON, consulte el archivo `backend_integration_plan.md`.
+Para ejecutar el entorno de desarrollo:
+```bash
+npm run dev
+```
+
+Credenciales de prueba:
+- **Email**: `admin@example.com`
+- **Password**: `password123`

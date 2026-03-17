@@ -134,7 +134,7 @@
             <div class="select-wrapper">
               <select v-model="formData.supervisorId" :disabled="readOnly || loadingSupervisors">
                 <option value="" disabled>{{ loadingSupervisors ? 'Cargando supervisores...' : 'Seleccione el supervisor...' }}</option>
-                <option v-for="s in supervisors" :key="s._id" :value="s._id">{{ s.fullName }}</option>
+                <option v-for="s in supervisors" :key="s._id" :value="s._id">{{ s.name }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -243,23 +243,22 @@ const handleSend = async () => {
       fullName: formData.fullName,
       eps: formData.eps,
       supervisorId: formData.supervisorId,
-      reportMonth: formData.monthTo,
-      reportYear: formData.yearTo,
       platform: 'aportes_en_linea',
       platformData: {
         mesIni: String(formData.monthFrom),
         anioIni: String(formData.yearFrom),
         mesFin: String(formData.monthTo),
         anioFin: String(formData.yearTo),
-        fechaExpedicion: formData.issueDate.replace(/-/g, '/')
+        fechaExpedicion: formData.issueDate.replace(/-/g, '/'),
+        tipoAfiliado: formData.affiliateType
       }
     };
 
     await reportService.createReport(payload);
-    notify('Su solicitud de Aportes en Línea ha sido enviada correctamente.');
+    notify('Solicitud enviada al servidor correctamente.');
     emit('success', payload);
   } catch (error) {
-    notify('Error al enviar la solicitud. Intente nuevamente.', 'error');
+    notify('Error al conectar con el servidor', 'error');
   } finally {
     sending.value = false;
   }
