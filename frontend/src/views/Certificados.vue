@@ -1,50 +1,5 @@
 <template>
-  <div class="certificates-container">
-    <!-- Barra de Navegación Superior -->
-    <header class="navbar">
-      <div class="nav-left">
-        <div class="brand">
-          <div class="brand-logo"></div>
-          <span class="brand-name">Certificados SS</span>
-        </div>
-        <nav class="nav-links">
-          <router-link to="/certificados" class="nav-link active">Certificados</router-link>
-        </nav>
-      </div>
-
-      <div class="nav-right">
-        <div class="nav-icons">
-          <div class="nav-icon-badge" title="Notificaciones" @click="handleNotificationClick">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-            <span class="badge-dot"></span>
-          </div>
-        </div>
-        <div class="user-container">
-          <div class="user-info" @click="toggleUserMenu">
-            <div class="user-text">
-              <span class="user-name">{{ userName }}</span>
-              <span class="user-role">Administrador</span>
-            </div>
-            <div class="user-avatar">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            </div>
-          </div>
-
-          <!-- Menú Desplegable de Perfil -->
-          <div v-if="isUserMenuOpen" class="user-dropdown">
-            <button class="dropdown-item" @click="handleEditProfile">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-              Editar perfil
-            </button>
-            <div class="dropdown-divider"></div>
-            <button class="dropdown-item logout" @click="handleLogout">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-              Cerrar sesión
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
+  <div class="certificates-page">
 
     <main class="page-main">
       <!-- Fila de Encabezado -->
@@ -426,566 +381,104 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { ref, onMounted } from 'vue';
 import SoiForm from '../components/SoiForm.vue';
 import AsopagosForm from '../components/AsopagosForm.vue';
 import CompensarForm from '../components/CompensarForm.vue';
 import AportesForm from '../components/AportesForm.vue';
-import { notify } from '../utils/notifications';
-import { reportService } from '../services/reportService';
-import { authService } from '../services/authService';
-import { supervisorService } from '../services/supervisorService';
+import { useAuth } from '../composables/useAuth';
+import { useCertificates } from '../composables/useCertificates';
 
-const authStore = useAuthStore();
-const userName = computed(() => authStore.user?.name || 'Usuario');
-
-// Estado de la Interfaz de Usuario (UI)
-const isUserMenuOpen = ref(false);
-const isDateMenuOpen = ref(false);
-const isContractorMenuOpen = ref(false);
-const isPlatformMenuOpen = ref(false);
-const isStatusMenuOpen = ref(false);
-const filterDateStart = ref('');
-const filterDateEnd = ref('');
-const searchContractorText = ref('');
-const selectedContractor = ref('');
-const filterPlatform = ref('');
-const filterStatus = ref('');
-const searchQuery = ref('');
-
-// Estado de Sincronización con Google Drive
-const isDriveModalOpen = ref(false);
-const isSyncingToDrive = ref(false);
-const driveEmail = ref('');
-const lastSyncTime = ref('');
-
-// Estado del Modal de Visualización
-const isViewModalOpen = ref(false);
-const selectedItemForView = ref(null);
-
-const handleVisualize = (item) => {
-  selectedItemForView.value = { ...item };
-  isViewModalOpen.value = true;
-};
-
-// Métodos para Alternar Elementos de la UI
-const toggleUserMenu = () => {
-  isUserMenuOpen.value = !isUserMenuOpen.value;
-  if (isUserMenuOpen.value) {
-    isDateMenuOpen.value = false;
-    isContractorMenuOpen.value = false;
-    isPlatformMenuOpen.value = false;
-    isStatusMenuOpen.value = false;
-  }
-};
-
-const toggleDateMenu = () => {
-  isDateMenuOpen.value = !isDateMenuOpen.value;
-  if (isDateMenuOpen.value) {
-    isUserMenuOpen.value = false;
-    isContractorMenuOpen.value = false;
-    isPlatformMenuOpen.value = false;
-    isStatusMenuOpen.value = false;
-  }
-};
-
-const toggleContractorMenu = () => {
-  isContractorMenuOpen.value = !isContractorMenuOpen.value;
-  if (isContractorMenuOpen.value) {
-    isUserMenuOpen.value = false;
-    isDateMenuOpen.value = false;
-    isPlatformMenuOpen.value = false;
-    isStatusMenuOpen.value = false;
-  }
-};
-
-const togglePlatformMenu = () => {
-  isPlatformMenuOpen.value = !isPlatformMenuOpen.value;
-  if (isPlatformMenuOpen.value) {
-    isUserMenuOpen.value = false;
-    isDateMenuOpen.value = false;
-    isContractorMenuOpen.value = false;
-    isStatusMenuOpen.value = false;
-  }
-};
-
-const toggleStatusMenu = () => {
-  isStatusMenuOpen.value = !isStatusMenuOpen.value;
-  if (isStatusMenuOpen.value) {
-    isUserMenuOpen.value = false;
-    isDateMenuOpen.value = false;
-    isContractorMenuOpen.value = false;
-    isPlatformMenuOpen.value = false;
-  }
-};
-
-const selectContractor = (name) => {
-  selectedContractor.value = name;
-  isContractorMenuOpen.value = false;
-};
-
-const selectPlatform = (plat) => {
-  filterPlatform.value = plat;
-  isPlatformMenuOpen.value = false;
-};
-
-const selectStatus = (status) => {
-  filterStatus.value = status;
-  isStatusMenuOpen.value = false;
-};
-
-const isEditProfileModalOpen = ref(false);
-const profileData = ref({
-  password: '',
-  confirmPassword: ''
-});
-
-const handleEditProfile = () => {
-  isEditProfileModalOpen.value = true;
-  isUserMenuOpen.value = false;
-};
-
-const closeEditProfileModal = () => {
-  isEditProfileModalOpen.value = false;
-  profileData.value.password = '';
-  profileData.value.confirmPassword = '';
-};
-
-const saveProfileChanges = async () => {
-  try {
-    const payload = {
-      name: userName.value,
-      email: authStore.user?.email || localStorage.getItem('userEmail')
-    };
-    
-    if (profileData.value.password) {
-      if (profileData.value.password !== profileData.value.confirmPassword) {
-        notify('Las contraseñas no coinciden.', 'error');
-        return;
-      }
-      payload.password = profileData.value.password;
-    }
-    
-    await supervisorService.updateProfile(payload);
-    notify('Perfil actualizado correctamente.');
-    closeEditProfileModal();
-  } catch (error) {
-    notify('Error al actualizar el perfil.', 'error');
-  }
-};
-
-const certificates = ref([]);
-const loadingCertificates = ref(false);
-const supervisorProfile = ref(null);
-
-const fetchCertificates = async () => {
-  loadingCertificates.value = true;
-  try {
-    const data = await reportService.getCertificates();
-    const list = data.reports || data;
-    certificates.value = list.map(item => ({
-      id: item._id,
-      persona: item.fullName || 'Sin nombre',
-      date: item.createdAt
-        ? new Date(item.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
-        : 'Sin fecha',
-      name: (item.supervisor && item.supervisor.name) || item.supervisorName || 'S/N',
-      cedula: item.documentNumber || '',
-      initials: item.fullName
-        ? item.fullName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)
-        : '??',
-      platform: item.platform
-        ? item.platform.charAt(0).toUpperCase() + item.platform.slice(1).replace(/_/g, ' ')
-        : 'N/A',
-      status: item.status === 'completed' ? 'Aprobado' : item.status === 'pending' ? 'Pendiente' : 'No aprobado',
-      platformData: item.platformData || {}
-    }));
-  } catch (error) {
-    console.error('Error fetching certificates:', error);
-    certificates.value = [];
-    if (error.response?.status !== 401) {
-      notify('Error al cargar los reportes.', 'error');
-    }
-  } finally {
-    loadingCertificates.value = false;
-  }
-};
-
-const fetchProfile = async () => {
-  try {
-    const profile = await supervisorService.getProfile();
-    supervisorProfile.value = profile;
-    if (profile.name) authStore.user.name = profile.name;
-    if (profile.folderId) driveEmail.value = profile.folderId;
-  } catch (error) {
-    console.error('Error fetching profile:', error);
-  }
-};
-
-const handleLogout = () => {
-  authService.logout();
-  router.push('/login');
-};
+const { isEditProfileModalOpen, profileData, handleEditProfile, closeEditProfileModal, saveProfileChanges } = useAuth();
+const {
+  isDateMenuOpen, isContractorMenuOpen, isPlatformMenuOpen, isStatusMenuOpen,
+  filterDateStart, filterDateEnd, searchContractorText, selectedContractor,
+  filterPlatform, filterStatus, searchQuery, currentPage, itemsPerPage,
+  isDriveModalOpen, isSyncingToDrive, driveEmail, lastSyncTime,
+  isViewModalOpen, selectedItemForView,
+  formattedDateRange, filteredContractorNames, paginatedCertificates,
+  totalPages, totalApproved, totalPending,
+  toggleDateMenu, toggleContractorMenu, togglePlatformMenu, toggleStatusMenu,
+  selectContractor, selectPlatform, selectStatus, clearDateRange, clearAllFilters,
+  prevPage, nextPage, goToPage,
+  fetchCertificates, handleVisualize, handleExportPDF, handleExportExcel, handleExportDrive, confirmDriveExport, closeDriveModal
+} = useCertificates();
 
 onMounted(() => {
-  fetchProfile();
   fetchCertificates();
-});
-
-const currentPage = ref(1);
-const itemsPerPage = ref(5);
-
-// Ayudante para parsear "DD Mon, YYYY" (ej., "01 Oct, 2023")
-const parseItemDate = (dateStr) => {
-  // Si la fecha ya está en formato local "16 de mar de 2026", necesitamos un mejor parser o usar la fecha original
-  // Por ahora, asumimos que podría ser ISO o el formato de visualización
-  const parts = dateStr.split(' ');
-  if (parts.length === 3) { // Asumir "01 Oct, 2023"
-    const months = {
-      Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-      Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
-    };
-    const day = parseInt(parts[0]);
-    const month = months[parts[1].replace(',', '')];
-    const year = parseInt(parts[2]);
-    return new Date(year, month, day);
-  }
-  return new Date(dateStr);
-};
-
-const filteredCertificates = computed(() => {
-  let result = certificates.value;
-
-  // Búsqueda Global (Nombre, Cédula, Plataforma)
-  if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase();
-    result = result.filter(item => 
-      item.name.toLowerCase().includes(q) || 
-      item.cedula.toLowerCase().includes(q) || 
-      item.platform.toLowerCase().includes(q)
-    );
-  }
-
-  // Filtrar por Contratista
-  if (selectedContractor.value) {
-    result = result.filter(item => item.name === selectedContractor.value);
-  }
-
-  // Filtrar por Plataforma
-  if (filterPlatform.value) {
-    result = result.filter(item => item.platform.toLowerCase() === filterPlatform.value.toLowerCase());
-  }
-
-  // Filtrar por Estado
-  if (filterStatus.value) {
-    result = result.filter(item => item.status === filterStatus.value);
-  }
-
-  // Filtrar por Fecha
-  if (filterDateStart.value || filterDateEnd.value) {
-    const start = filterDateStart.value ? new Date(filterDateStart.value) : null;
-    const end = filterDateEnd.value ? new Date(filterDateEnd.value) : null;
-
-    if (start) start.setHours(0, 0, 0, 0);
-    if (end) end.setHours(23, 59, 59, 999);
-
-    result = result.filter(item => {
-      const itemDate = parseItemDate(item.date);
-      if (start && itemDate < start) return false;
-      if (end && itemDate > end) return false;
-      return true;
-    });
-  }
-
-  return result;
-});
-
-const totalPages = computed(() => {
-  return Math.ceil(filteredCertificates.value.length / itemsPerPage.value);
-});
-
-const paginatedCertificates = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredCertificates.value.slice(start, end);
-});
-
-const totalApproved = computed(() => {
-  return filteredCertificates.value.filter(item => item.status === 'Aprobado').length;
-});
-
-const totalPending = computed(() => {
-  return filteredCertificates.value.filter(item => item.status === 'No aprobado').length;
-});
-
-const prevPage = () => {
-  if (currentPage.value > 1) currentPage.value--;
-};
-
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) currentPage.value++;
-};
-
-const goToPage = (page) => {
-  currentPage.value = page;
-};
-
-// Reiniciar página cuando cambian los filtros
-watch([searchQuery, selectedContractor, filterPlatform, filterStatus, filterDateStart, filterDateEnd], () => {
-  currentPage.value = 1;
-});
-
-const filteredContractorNames = computed(() => {
-  const names = [...new Set(certificates.value.map(item => item.name))];
-  if (!searchContractorText.value) return names;
-  return names.filter(name => 
-    name.toLowerCase().includes(searchContractorText.value.toLowerCase())
-  );
-});
-
-const formattedDateRange = computed(() => {
-  if (!filterDateStart.value && !filterDateEnd.value) return 'Rango de Fechas';
-  if (filterDateStart.value && filterDateEnd.value) return `${filterDateStart.value} - ${filterDateEnd.value}`;
-  return filterDateStart.value ? `Desde ${filterDateStart.value}` : `Hasta ${filterDateEnd.value}`;
-});
-
-const clearDateRange = () => {
-  filterDateStart.value = '';
-  filterDateEnd.value = '';
-};
-
-const clearAllFilters = () => {
-  clearDateRange();
-  selectedContractor.value = '';
-  searchContractorText.value = '';
-  filterPlatform.value = '';
-  filterStatus.value = '';
-  searchQuery.value = '';
-  currentPage.value = 1;
-};
-
-const handleExportExcel = () => {
-  if (filteredCertificates.value.length === 0) {
-    notify('No hay datos para exportar con los filtros actuales.', 'error');
-    return;
-  }
-
-  // Encabezados para CSV
-  const headers = ['Fecha de Solicitud', 'ID (Cédula)', 'Nombre', 'Contratista', 'Plataforma', 'Estado'];
-  
-  // Mapear datos a filas
-  const rows = filteredCertificates.value.map(item => [
-    item.date,
-    item.cedula,
-    item.persona,
-    item.name,
-    item.platform,
-    item.status
-  ]);
-
-  // Contenido CSV combinado con BOM para UTF-8 (amigable para Excel)
-  const csvContent = "\uFEFF" + [
-    headers.join(','),
-    ...rows.map(row => row.join(','))
-  ].join('\n');
-
-  // Crear blob y enlace de descarga
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  
-  link.setAttribute('href', url);
-  link.setAttribute('download', 'certificados_export.csv');
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
-
-const handleExportPDF = (specificItem = null) => {
-  const dataToExport = specificItem ? [specificItem] : filteredCertificates.value;
-
-  if (dataToExport.length === 0) {
-    notify('No hay datos para exportar.', 'error');
-    return;
-  }
-  
-  const doc = new jsPDF();
-  
-  // Agregar título
-  doc.setFontSize(18);
-  const title = specificItem ? `Formulario de Contratista - ${specificItem.persona}` : 'Reporte de Cumplimiento de Certificados';
-  doc.text(title, 14, 22);
-  doc.setFontSize(11);
-  doc.setTextColor(100);
-  
-  // Agregar metadatos
-  const date = new Date().toLocaleDateString();
-  doc.text(`Fecha de generación: ${date}`, 14, 30);
-  if (!specificItem) {
-    doc.text(`Total de registros: ${dataToExport.length}`, 14, 36);
-  }
-  
-  // Generar Tabla
-  const tableColumn = ["Fecha", "ID (Cédula)", "Nombre", "Contratista", "Plataforma", "Estado"];
-  const tableRows = dataToExport.map(item => [
-    item.date,
-    item.cedula,
-    item.persona,
-    item.name,
-    item.platform,
-    item.status
-  ]);
-
-  autoTable(doc, {
-    head: [tableColumn],
-    body: tableRows,
-    startY: specificItem ? 40 : 45,
-    theme: 'striped',
-    headStyles: { fillColor: [34, 197, 94] }, // Verde SENA
-    styles: { fontSize: 9 }
-  });
-
-  // Descargar el PDF
-  const filename = specificItem ? `formulario_${specificItem.cedula}.pdf` : 'reporte_certificados.pdf';
-  doc.save(filename);
-};
-
-const handleExportDrive = () => {
-  console.log('Opening Drive Sync Modal...');
-  isDriveModalOpen.value = true;
-};
-
-const handleNotificationClick = () => {
-  notify('No hay nuevas notificaciones en este momento.', 'success');
-};
-
-const closeDriveModal = () => {
-  if (!isSyncingToDrive.value) {
-    isDriveModalOpen.value = false;
-  }
-};
-
-const confirmDriveExport = () => {
-  if (!driveEmail.value || !driveEmail.value.includes('@')) {
-    notify('Por favor, ingresa un correo electrónico válido.', 'error');
-    return;
-  }
-
-  isSyncingToDrive.value = true;
-  
-  // Simular llamada a la API de Google Drive
-  setTimeout(() => {
-    isSyncingToDrive.value = false;
-    isDriveModalOpen.value = false;
-    
-    const now = new Date();
-    lastSyncTime.value = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    localStorage.setItem('lastDriveSync', lastSyncTime.value);
-    localStorage.setItem('driveEmail', driveEmail.value);
-    
-    notify('Sincronización completada exitosamente.', 'success');
-  }, 3000);
-};
-
-const generatePDFBlob = () => {
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text('Reporte de Cumplimiento de Certificados', 14, 22);
-  doc.setFontSize(11);
-  const date = new Date().toLocaleDateString();
-  doc.text(`Fecha: ${date}`, 14, 30);
-  
-  const tableColumn = ["Fecha", "ID (Cédula)", "Nombre", "Contratista", "Plataforma", "Estado"];
-  const tableRows = filteredCertificates.value.map(item => [
-    item.date, item.cedula, item.persona, item.name, item.platform, item.status
-  ]);
-
-  autoTable(doc, {
-    head: [tableColumn],
-    body: tableRows,
-    startY: 40,
-    theme: 'striped',
-    headStyles: { fillColor: [34, 197, 94] }
-  });
-  
-  return doc;
-};
-
-
-
-onMounted(() => {
-  const savedName = localStorage.getItem('userName');
-  if (savedName) {
-    userName.value = savedName;
-  }
-
-  const savedSync = localStorage.getItem('lastDriveSync');
-  if (savedSync) lastSyncTime.value = savedSync;
-  
-  const savedEmail = localStorage.getItem('driveEmail');
-  if (savedEmail) driveEmail.value = savedEmail;
 });
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.certificates-container {
+.certificates-page {
   font-family: 'Inter', sans-serif;
-  background-color: #f1f8f6; /* Very light green-grey */
-  min-height: 125vh; /* Compensates for zoom: 0.8 (100 / 0.8) */
   color: #0f172a;
-  display: flex;
-  flex-direction: column;
-  zoom: 0.8;
 }
 
-/* Barra de Navegación */
-.navbar {
-  height: 52px; /* Reduced from 60px */
-  background-color: white;
-  border-bottom: 1px solid #e2e8f0;
+/* Contenido Principal de la Página */
+.page-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+}
+
+.page-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 2rem; /* Reduced from 4rem */
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.nav-left, .nav-right {
-  display: flex;
   align-items: center;
-  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.brand-logo {
-  width: 24px;
-  height: 24px;
-  background-color: #39a900;
-  border-radius: 6px;
-}
-
-.brand-name {
+.page-title {
+  font-size: 1.6rem;
   font-weight: 800;
-  font-size: 1rem;
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
 }
 
-.nav-links {
+.page-subtitle {
+  color: #64748b;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.header-actions {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-white {
+  background-color: #f8fafc;
+  color: #1e293b;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+}
+
+.btn-green {
+  background-color: #22c55e;
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.4);
+}
+
+.btn-blue {
+  background-color: #4285F4;
+  color: white;
+  box-shadow: 0 10px 15px -3px rgba(66, 133, 244, 0.4);
 }
 
 .nav-link {
@@ -1725,7 +1218,7 @@ onMounted(() => {
   color: #0f172a;
 }
 
-/* Pie de Tabla */
+/* Estilo del Pie de Tabla */
 .table-footer {
   padding: 1rem 1.5rem;
   display: flex;
@@ -1771,17 +1264,17 @@ onMounted(() => {
 
 .stat-card {
   background-color: white;
-  padding: 1.25rem; /* Reducido de 1.5rem */
-  border-radius: 16px; /* Reducido de 20px */
+  padding: 1.25rem;
+  border-radius: 16px;
   display: flex;
   align-items: center;
-  gap: 1.25rem; /* Reducido de 1.5rem */
+  gap: 1.25rem;
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
 .stat-icon {
-  width: 42px; /* Reducido de 48px */
-  height: 42px; /* Reducido */
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1798,57 +1291,21 @@ onMounted(() => {
 }
 
 .stat-label {
-  font-size: 0.65rem; /* Reducido de 0.7rem */
+  font-size: 0.65rem;
   font-weight: 800;
   color: #94a3b8;
   letter-spacing: 0.05em;
 }
 
 .stat-value {
-  font-size: 1.3rem; /* Reducido de 1.5rem */
+  font-size: 1.3rem;
   font-weight: 900;
 }
 
 @media (max-width: 1024px) {
   .page-main { padding: 2rem; }
-  .navbar { padding: 0 2rem; }
   .stats-grid { grid-template-columns: 1fr; }
 }
-
-/* Estilo del Pie de Página */
-.page-footer {
-  margin-top: auto;
-  padding: 3rem 4rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: white;
-  border-top: 1px solid #f1f5f9;
-}
-
-.footer-left {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: #94a3b8;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.footer-links {
-  display: flex;
-  gap: 2rem;
-}
-
-.footer-links a {
-  text-decoration: none;
-  color: #94a3b8;
-  font-size: 0.9rem;
-  font-weight: 600;
-  transition: color 0.2s;
-}
-
-.footer-links a:hover { color: #0f172a; }
 
 /* Estilos de Modales */
 .modal-overlay {
@@ -2037,8 +1494,6 @@ onMounted(() => {
   cursor:not-allowed;
 }
 
-
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -2053,8 +1508,6 @@ onMounted(() => {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
-
-
 
 /* Estilos Especiales del Modal de Visualización */
 .form-modal-overlay {
@@ -2093,4 +1546,5 @@ onMounted(() => {
 .form-modal-container::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+</style>
 </style>

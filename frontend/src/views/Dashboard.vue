@@ -1,10 +1,7 @@
 <template>
-  <div class="dashboard-container">
-
-
+  <div class="dashboard-page">
     <!-- Contenido de la Página -->
     <main class="page-main">
-      <!-- Sección Hero (Encabezado) -->
       <section class="hero-section">
         <div class="hero-left">
           <h1 class="hero-title">Panel de Control de <br><span class="accent-text">Seguridad Social</span></h1>
@@ -74,30 +71,26 @@
               <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Gestión de colas de aprobación</li>
               <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Firma digital centralizada</li>
             </ul>
-            <button class="btn-action secondary" @click="router.push('/login')">
+            <button class="btn-action secondary" @click="router.push('/certificados')">
               Panel de Supervisión <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 16h10"/><path d="M7 12h10"/><path d="M7 8h10"/></svg>
             </button>
           </div>
         </div>
       </section>
 
-      <!-- Sección Condicional de Tabla o Formulario -->
-      <section v-if="activeForm === 'soi' || activeForm === 'asopagos' || activeForm === 'compensar' || activeForm === 'aportes'" class="form-embedded-container">
+      <section v-if="activeForm" class="form-embedded-container">
         <SoiForm v-if="activeForm === 'soi'" @cancel="activeForm = null" />
         <AsopagosForm v-if="activeForm === 'asopagos'" @cancel="activeForm = null" />
         <CompensarForm v-if="activeForm === 'compensar'" @cancel="activeForm = null" />
         <AportesForm v-if="activeForm === 'aportes'" @cancel="activeForm = null" />
       </section>
 
-
     </main>
-
-
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, markRaw } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import SoiForm from '../components/SoiForm.vue';
 import AsopagosForm from '../components/AsopagosForm.vue';
@@ -108,31 +101,11 @@ import asopagosLogo from '../assets/platforms/asopagos_logo.png';
 import compensarLogo from '../assets/platforms/compensar_logo.png';
 import aportesLogo from '../assets/platforms/aportes_logo.png';
 import { notify } from '../utils/notifications';
-import { authService } from '../services/authService';
-
-import { useAuthStore } from '../store/auth';
 
 const router = useRouter();
-const authStore = useAuthStore();
-const userName = computed(() => authStore.user?.name || 'Usuario');
 const activeForm = ref(null);
 const showPlatforms = ref(false);
 const selectedPlatform = ref(null);
-const isUserMenuOpen = ref(false);
-
-const toggleUserMenu = () => {
-  isUserMenuOpen.value = !isUserMenuOpen.value;
-};
-
-const handleEditProfile = () => {
-  notify('Editar perfil - Próximamente', 'success');
-  isUserMenuOpen.value = false;
-};
-
-const handleLogout = () => {
-  authService.logout();
-  router.push('/login');
-};
 
 const platforms = [
   { id: 'soi', name: 'Plataforma SOI', image: soiLogo },
@@ -145,23 +118,9 @@ const handleFormAction = () => {
   if (!showPlatforms.value) {
     showPlatforms.value = true;
   } else if (selectedPlatform.value) {
-    if (selectedPlatform.value === 'soi') {
-      activeForm.value = 'soi';
-    } else if (selectedPlatform.value === 'asopagos') {
-      activeForm.value = 'asopagos';
-    } else if (selectedPlatform.value === 'compensar') {
-      activeForm.value = 'compensar';
-    } else if (selectedPlatform.value === 'aportes') {
-      activeForm.value = 'aportes';
-    } else {
-      notify(`Plataforma ${selectedPlatform.value} seleccionada. Próximamente disponible.`, 'success');
-    }
+    activeForm.value = selectedPlatform.value;
   }
 };
-
-onMounted(() => {
-  // authStore se inicializa desde el localStorage en su definición
-});
 </script>
 
 <style scoped>

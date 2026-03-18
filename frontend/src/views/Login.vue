@@ -1,10 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { notify } from '../utils/notifications'
-import { authService } from '../services/authService'
+import { useAuth } from '../composables/useAuth'
 
-const router = useRouter()
+const { login } = useAuth()
 const email = ref('')
 const password = ref('')
 const rememberMe = ref(false)
@@ -12,228 +10,135 @@ const showPassword = ref(false)
 const loading = ref(false)
 
 const handleLogin = async () => {
-  if (!email.value || !password.value) {
-    notify('Por favor, ingrese sus credenciales.', 'error');
-    return;
-  }
-
-  loading.value = true;
-  try {
-    const result = await authService.login(email.value, password.value);
-    if (result.success) {
-      notify('Bienvenido al sistema.');
-      router.push('/certificados');
-    } else {
-      notify(result.message || 'Error en la autenticación.', 'error');
-    }
-  } catch (error) {
-    notify('Error al conectar con el servidor.', 'error');
-  } finally {
-    loading.value = false;
-  }
+  loading.value = true
+  await login(email.value, password.value)
+  loading.value = false
 }
 </script>
 
 <template>
-  <div class="login-wrapper">
-    <!-- Elementos decorativos de fondo dinámicos -->
-    <div class="bg-decoration">
-      <div class="circle circle-1"></div>
-      <div class="circle circle-2"></div>
-      <div class="grid-pattern"></div>
+  <div class="login-card fade-in">
+    <!-- Lado Izquierdo: Información (Verde) -->
+    <div class="login-info">
+      <div class="info-overlay"></div>
+      <div class="info-content slide-up">
+        <div class="status-badge">
+          <span class="pulse"></span> Sistema Seguro
+        </div>
+        <h2 class="info-title">Acceso Seguro para Supervisores</h2>
+        <p class="info-description">
+          Gestione, valide y audite certificados de seguridad social de manera eficiente dentro del ecosistema institucional.
+        </p>
+        
+        <ul class="features-list">
+          <li>
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <span>Encriptación nivel gubernamental</span>
+          </li>
+          <li>
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
+            </div>
+            <span>Cumplimiento normativo 2024</span>
+          </li>
+          <li>
+            <div class="feature-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+            </div>
+            <span>Auditoría en tiempo real</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <!-- Contenido Principal -->
-    <main class="main-container">
-      <div class="login-card fade-in">
-        <!-- Lado Izquierdo: Información (Verde) -->
-        <div class="login-info">
-          <div class="info-overlay"></div>
-          <div class="info-content slide-up">
-            <div class="status-badge">
-              <span class="pulse"></span> Sistema Seguro
+    <!-- Lado Derecho: Formulario (Blanco) -->
+    <div class="login-form-container">
+      <form @submit.prevent="handleLogin" class="login-form slide-up-delayed">
+        <div class="form-header">
+          <h2 class="form-title">Bienvenido</h2>
+          <p class="form-subtitle">Ingrese sus credenciales de acceso</p>
+        </div>
+
+        <div class="login-input-group">
+          <label>Correo o Usuario</label>
+          <div class="login-input-wrapper">
+            <div class="field-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
-            <h2 class="info-title">Acceso Seguro para Supervisores</h2>
-            <p class="info-description">
-              Gestione, valide y audite certificados de seguridad social de manera eficiente dentro del ecosistema institucional.
-            </p>
-            
-            <ul class="features-list">
-              <li>
-                <div class="feature-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </div>
-                <span>Encriptación nivel gubernamental</span>
-              </li>
-              <li>
-                <div class="feature-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/></svg>
-                </div>
-                <span>Cumplimiento normativo 2024</span>
-              </li>
-              <li>
-                <div class="feature-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-                </div>
-                <span>Auditoría en tiempo real</span>
-              </li>
-            </ul>
+            <input 
+              v-model="email" 
+              type="text" 
+              placeholder="ejemplo@organizacion.gob"
+              required
+            />
           </div>
         </div>
 
-        <!-- Lado Derecho: Formulario (Blanco) -->
-        <div class="login-form-container">
-          <form @submit.prevent="handleLogin" class="login-form slide-up-delayed">
-            <div class="form-header">
-              <h2 class="form-title">Bienvenido</h2>
-              <p class="form-subtitle">Ingrese sus credenciales de acceso</p>
+        <div class="login-input-group">
+          <label>Contraseña</label>
+          <div class="login-input-wrapper">
+            <div class="field-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
-
-            <div class="login-input-group">
-              <label>Correo o Usuario</label>
-              <div class="login-input-wrapper">
-                <div class="field-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-                <input 
-                  v-model="email" 
-                  type="text" 
-                  placeholder="ejemplo@organizacion.gob"
-                  required
-                />
-              </div>
-            </div>
-
-            <div class="login-input-group">
-              <label>Contraseña</label>
-              <div class="login-input-wrapper">
-                <div class="field-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
-                <input 
-                  v-model="password" 
-                  :type="showPassword ? 'text' : 'password'" 
-                  placeholder="••••••••••••"
-                  required
-                />
-                <button 
-                  type="button" 
-                  class="toggle-password" 
-                  @click="showPassword = !showPassword"
-                >
-                  <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                  <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                </button>
-              </div>
-            </div>
-
-            <div class="form-actions">
-              <label class="checkbox-container">
-                <input type="checkbox" v-model="rememberMe">
-                <span class="checkmark"></span>
-                Recordarme
-              </label>
-              <a href="#" class="forgot-link">¿Olvidó su contraseña?</a>
-            </div>
-
-            <button type="submit" class="submit-btn primary-pulse" :disabled="loading">
-              <span>{{ loading ? 'Iniciando...' : 'Iniciar Sesión' }}</span>
-              <span v-if="loading" class="spinner-small" style="margin-left: 10px;"></span>
-              <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            <input 
+              v-model="password" 
+              :type="showPassword ? 'text' : 'password'" 
+              placeholder="••••••••••••"
+              required
+            />
+            <button 
+              type="button" 
+              class="toggle-password" 
+              @click="showPassword = !showPassword"
+            >
+              <svg v-if="!showPassword" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
             </button>
-
-            <div class="security-disclaimer">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Acceso restringido para personal autorizado.
-            </div>
-          </form>
+          </div>
         </div>
-      </div>
-    </main>
+
+        <div class="form-actions">
+          <label class="checkbox-container">
+            <input type="checkbox" v-model="rememberMe">
+            <span class="checkmark"></span>
+            Recordarme
+          </label>
+          <a href="#" class="forgot-link">¿Olvidó su contraseña?</a>
+        </div>
+
+        <button type="submit" class="submit-btn primary-pulse" :disabled="loading">
+          <span>{{ loading ? 'Iniciando...' : 'Iniciar Sesión' }}</span>
+          <span v-if="loading" class="spinner-small" style="margin-left: 10px;"></span>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+
+        <div class="security-disclaimer">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Acceso restringido para personal autorizado.
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.login-wrapper {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), 
-              url('../assets/sena-bg.png') center/cover no-repeat;
-  overflow: hidden;
-}
-
-/* Decoraciones de Fondo */
-.bg-decoration {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.circle {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.2;
-}
-
-.circle-1 {
-  top: -10%;
-  right: -5%;
-  width: 500px;
-  height: 500px;
-  background: rgba(45, 122, 52, 0.15);
-}
-
-.circle-2 {
-  bottom: -15%;
-  left: -5%;
-  width: 600px;
-  height: 600px;
-  background: rgba(45, 122, 52, 0.1);
-}
-
-.grid-pattern {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(#ffffff22 1px, transparent 1px);
-  background-size: 30px 30px;
-  opacity: 0.2;
-}
-
-/* Contenedor Principal */
-.main-container {
-  position: relative;
-  z-index: 10;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-
 .login-card {
   width: 100%;
   max-width: 820px;
   height: 520px;
   display: flex;
-  background: transparent; /* El contenedor principal es transparente para permitir que los hijos definan el aspecto */
+  background: transparent;
   border-radius: 24px;
   overflow: hidden;
   box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Lado Izquierdo: Información */
 .login-info {
   flex: 4;
-  background: linear-gradient(145deg, #1e5223 0%, #2d7a34 100%); /* Fondo verde sólido como el original */
+  background: linear-gradient(145deg, #1e5223 0%, #2d7a34 100%);
   color: white;
   padding: 2.5rem;
   display: flex;
@@ -245,9 +150,7 @@ const handleLogin = async () => {
 .info-overlay {
   position: absolute;
   inset: 0;
-  background-image: 
-    linear-gradient(rgba(0,0,0,0.1), transparent),
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 40%);
+  background-image: linear-gradient(rgba(0,0,0,0.1), transparent), radial-gradient(circle at 20% 20%, rgba(255,255,255,0.05), transparent 40%);
 }
 
 .info-content {
@@ -325,14 +228,13 @@ const handleLogin = async () => {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Lado Derecho: Formulario */
 .login-form-container {
   flex: 6;
   padding: 2.5rem 3.5rem;
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.2); /* Semi-transparent for glass effect */
-  backdrop-filter: blur(25px); /* Glass blur only on this part */
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(25px);
 }
 
 .login-form {
@@ -352,7 +254,7 @@ const handleLogin = async () => {
 }
 
 .form-subtitle {
-  color: rgba(255, 255, 255, 0.8); /* Color claro para transparencia */
+  color: rgba(255, 255, 255, 0.8);
   font-size: 0.88rem;
   font-weight: 500;
 }
@@ -446,12 +348,12 @@ const handleLogin = async () => {
   width: 16px;
   height: 16px;
   cursor: pointer;
-  accent-color: #2d7a34; /* Color personalizado para el checkbox */
+  accent-color: #2d7a34;
 }
 
 .forgot-link {
   font-size: 0.85rem;
-  color: #4ade80; /* Verde más brillante para contraste en fondo oscuro */
+  color: #4ade80;
   font-weight: 700;
   transition: all 0.2s;
   text-decoration: none;
@@ -499,60 +401,11 @@ const handleLogin = async () => {
   font-weight: 500;
 }
 
-/* Animaciones */
-.fade-in {
-  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.slide-up {
-  animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-}
-
-.slide-up-delayed {
-  opacity: 0;
-  animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s forwards;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.98); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse-green {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(74, 222, 128, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); }
-}
-
-.primary-pulse:hover {
-  animation: none; /* Se puede agregar interacción sutil aquí */
-}
-
 @media (max-width: 900px) {
   .login-card {
     flex-direction: column;
     height: auto;
     max-width: 450px;
-    margin: 1rem;
-  }
-  .login-info {
-    padding: 2rem;
-  }
-  .login-form-container {
-    padding: 2.5rem;
-  }
-  .info-title {
-    font-size: 1.6rem;
-  }
-  .login-wrapper {
-    height: auto;
-    min-height: 100vh;
-    overflow-y: auto;
   }
 }
 </style>
