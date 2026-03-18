@@ -9,6 +9,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
+    "X-Tunnel-Skip-Bypass": "true",
   },
 });
 
