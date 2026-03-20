@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="soi-form-embedded">
     <div class="form-inner-header">
       <div class="header-titles">
@@ -23,10 +23,9 @@
             <div class="input-group col-4">
               <label>Tipo de Documento</label>
               <div class="select-wrapper">
-                <select v-model="formData.documentType" :disabled="readOnly">
-                  <option v-for="type in documentTypes" :key="type.value" :value="type.value">
-                    {{ type.label }} ({{ type.value }})
-                  </option>
+                <select v-model="formData.docType" :disabled="readOnly">
+                  <option value="CC">Cédula de Ciudadanía (CC)</option>
+                  <option value="CE">Cédula de Extranjería (CE)</option>
                 </select>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
               </div>
@@ -34,7 +33,7 @@
 
             <div class="input-group col-8">
               <label>Número de Documento</label>
-              <input type="text" v-model="formData.documentNumber" placeholder="Ej: 1023456789" :disabled="readOnly" />
+              <input type="text" v-model="formData.docNumber" placeholder="Ej: 1023456789" :disabled="readOnly" />
             </div>
 
             <div class="input-group col-6">
@@ -43,14 +42,8 @@
             </div>
 
             <div class="input-group col-6">
-              <label>EPS (Catálogo SOI)</label>
-              <div class="select-wrapper">
-                <select v-model="formData.eps" :disabled="readOnly">
-                  <option value="" disabled>Seleccione su EPS...</option>
-                  <option v-for="eps in epsCatalogSoi" :key="eps" :value="eps">{{ eps }}</option>
-                </select>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
-              </div>
+              <label>EPS</label>
+              <input type="text" v-model="formData.eps" placeholder="Entidad promotora de salud" :disabled="readOnly" />
             </div>
           </div>
         </div>
@@ -71,8 +64,8 @@
           <div class="input-group col-4">
             <label>Mes</label>
             <div class="select-wrapper">
-              <select v-model="formData.reportMonth" :disabled="readOnly">
-                <option v-for="m in monthsList" :key="m.value" :value="m.value">{{ m.name }}</option>
+              <select v-model="formData.month" :disabled="readOnly">
+                <option v-for="m in months" :key="m" :value="m">{{ m }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -80,8 +73,8 @@
           <div class="input-group col-4">
             <label>Año</label>
             <div class="select-wrapper">
-              <select v-model="formData.reportYear" :disabled="readOnly">
-                <option v-for="y in yearsList" :key="y" :value="y">{{ y }}</option>
+              <select v-model="formData.year" :disabled="readOnly">
+                <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -95,9 +88,9 @@
               <label>Supervisor Encargado</label>
             </div>
             <div class="select-wrapper">
-              <select v-model="formData.supervisorId" :disabled="readOnly || loadingSupervisors">
-                <option value="" disabled>{{ loadingSupervisors ? 'Cargando supervisores...' : 'Seleccione el supervisor...' }}</option>
-                <option v-for="s in supervisors" :key="s._id" :value="s._id">{{ s.name }}</option>
+              <select v-model="formData.supervisor" :disabled="readOnly">
+                <option value="" disabled>Seleccione el supervisor de su contrato...</option>
+                <option v-for="s in supervisors" :key="s" :value="s">{{ s }}</option>
               </select>
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="chevron"><path d="m6 9 6 6 6-6"/></svg>
             </div>
@@ -106,12 +99,11 @@
       </section>
 
       <div class="form-actions" v-if="!readOnly">
-        <button class="btn-send" @click="handleSend" :disabled="sending">
-          <span v-if="sending" class="spinner-small"></span>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="send-icon"><path d="m22 2-7 20-4-9-9-4Z"/></svg>
-          {{ sending ? 'Enviando...' : 'Enviar Solicitud' }}
+        <button class="btn-send" @click="handleSend">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="send-icon"><path d="m22 2-7 20-4-9-9-4Z"/></svg>
+          Enviar Solicitud
         </button>
-        <button class="btn-cancel" @click="$emit('cancel')" :disabled="sending">Cancelar</button>
+        <button class="btn-cancel" @click="$emit('cancel')">Cancelar</button>
       </div>
       <div class="form-actions" v-else>
         <button class="btn-cancel" style="flex: 1;" @click="$emit('cancel')">Cerrar Vista</button>
@@ -121,11 +113,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, defineEmits, defineProps, onMounted } from 'vue';
-import { notify } from '../utils/notifications';
-import { reportService } from '../services/reportService';
-import { supervisorService } from '../services/supervisorService';
-import { documentTypes, epsCatalogSoi, monthsList, yearsList, fallbackSupervisors } from '../constants/options';
+import { reactive, defineEmits, defineProps, onMounted } from 'vue';
 
 const props = defineProps({
   initialData: {
@@ -141,79 +129,39 @@ const props = defineProps({
 const emit = defineEmits(['cancel', 'success']);
 
 const formData = reactive({
-  documentType: 'CC',
-  documentNumber: '',
+  docType: 'CC',
+  docNumber: '',
   fullName: '',
   eps: '',
   platform: 'soi',
-  reportMonth: new Date().getMonth() + 1,
-  reportYear: new Date().getFullYear(),
-  supervisorId: ''
+  month: 'Enero',
+  year: '2024',
+  supervisor: ''
 });
 
-const supervisors = ref([]);
-const loadingSupervisors = ref(false);
-const sending = ref(false);
-
-const fetchSupervisors = async () => {
-  loadingSupervisors.value = true;
-  try {
-    const data = await supervisorService.getSupervisors();
-    supervisors.value = data;
-  } catch (error) {
-    console.error('Error fetching supervisors, using fallback:', error);
-    supervisors.value = fallbackSupervisors;
-  } finally {
-    loadingSupervisors.value = false;
-  }
-};
+const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const years = ['2023', '2024', '2025'];
+const supervisors = [
+  'Miguel Ángel Corredor',
+  'Santiago Pérez',
+  'Claudia Patricia Gómez',
+  'Ricardo Silva',
+  'Elena López'
+];
 
 onMounted(() => {
-  fetchSupervisors();
-
   if (props.initialData && Object.keys(props.initialData).length > 0) {
-    // Mapeo inverso si es necesario para visualización
-    formData.documentType = props.initialData.documentType || 'CC';
-    formData.documentNumber = props.initialData.documentNumber || props.initialData.cedula || '';
-    formData.fullName = props.initialData.fullName || props.initialData.persona || '';
-    formData.eps = props.initialData.eps || '';
-    formData.reportMonth = props.initialData.reportMonth || 1;
-    formData.reportYear = props.initialData.reportYear || 2024;
-    formData.supervisorId = props.initialData.supervisorId || '';
+    Object.assign(formData, props.initialData);
+    
+    // Si el item viene de la tabla de certificados, mapear persona -> fullName y cedula -> docNumber
+    if (props.initialData.persona) formData.fullName = props.initialData.persona;
+    if (props.initialData.cedula) formData.docNumber = props.initialData.cedula;
   }
 });
 
-const handleSend = async () => {
-  // Validaciones básicas
-  if (!formData.documentNumber || !formData.fullName || !formData.eps || !formData.supervisorId) {
-    notify('Por favor complete todos los campos obligatorios.', 'error');
-    return;
-  }
-
-  sending.value = true;
-  try {
-    // Estructura según Guía de Integración final
-    const payload = {
-      documentType: formData.documentType,
-      documentNumber: formData.documentNumber,
-      fullName: formData.fullName,
-      eps: formData.eps,
-      supervisorId: formData.supervisorId,
-      platform: 'soi',
-      platformData: {
-        mes: String(formData.reportMonth),
-        anio: String(formData.reportYear)
-      }
-    };
-
-    await reportService.createReport(payload);
-    notify('Solicitud enviada al servidor correctamente.');
-    emit('success', payload);
-  } catch (error) {
-    notify('Error al conectar con el servidor', 'error');
-  } finally {
-    sending.value = false;
-  }
+const handleSend = () => {
+  alert('Solicitud Enviada con éxito');
+  emit('success', formData);
 };
 </script>
 

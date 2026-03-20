@@ -1,7 +1,10 @@
-<template>
-  <div class="dashboard-page">
-    <!-- Contenido de la Página -->
+﻿<template>
+  <div class="dashboard-container">
+
+
+    <!-- Page Content -->
     <main class="page-main">
+      <!-- Hero Section -->
       <section class="hero-section">
         <div class="hero-left">
           <h1 class="hero-title">Panel de Control de <br><span class="accent-text">Seguridad Social</span></h1>
@@ -11,7 +14,7 @@
 
 
 
-      <!-- Sección de Tarjetas de Acción -->
+      <!-- Action Cards Section -->
       <section class="action-cards-grid">
         <div class="action-card form-card">
           <div class="card-visual-side green">
@@ -23,13 +26,13 @@
             <h2 class="card-title">Llenar Formulario</h2>
             <p class="card-text">Complete nuevas solicitudes de certificados de seguridad social de forma digital.</p>
             
-            <!-- Lista de Características por Defecto -->
+            <!-- Default Feature List -->
             <ul v-if="!showPlatforms" class="feature-list">
               <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Validación automática de datos</li>
               <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Guardado automático de borradores</li>
             </ul>
 
-            <!-- Lista de Selección de Plataforma -->
+            <!-- Platform Selection List -->
             <div v-else class="platform-mini-list">
               <div 
                 v-for="platform in platforms" 
@@ -71,26 +74,30 @@
               <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Gestión de colas de aprobación</li>
               <li><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39a900" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Firma digital centralizada</li>
             </ul>
-            <button class="btn-action secondary" @click="router.push('/certificados')">
+            <button class="btn-action secondary" @click="router.push('/login')">
               Panel de Supervisión <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 16h10"/><path d="M7 12h10"/><path d="M7 8h10"/></svg>
             </button>
           </div>
         </div>
       </section>
 
-      <section v-if="activeForm" class="form-embedded-container">
+      <!-- Conditional Table or Form Section -->
+      <section v-if="activeForm === 'soi' || activeForm === 'asopagos' || activeForm === 'compensar' || activeForm === 'aportes'" class="form-embedded-container">
         <SoiForm v-if="activeForm === 'soi'" @cancel="activeForm = null" />
         <AsopagosForm v-if="activeForm === 'asopagos'" @cancel="activeForm = null" />
         <CompensarForm v-if="activeForm === 'compensar'" @cancel="activeForm = null" />
         <AportesForm v-if="activeForm === 'aportes'" @cancel="activeForm = null" />
       </section>
 
+
     </main>
+
+
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, computed, markRaw } from 'vue';
 import { useRouter } from 'vue-router';
 import SoiForm from '../components/SoiForm.vue';
 import AsopagosForm from '../components/AsopagosForm.vue';
@@ -100,12 +107,27 @@ import soiLogo from '../assets/platforms/soi_logo.png';
 import asopagosLogo from '../assets/platforms/asopagos_logo.png';
 import compensarLogo from '../assets/platforms/compensar_logo.png';
 import aportesLogo from '../assets/platforms/aportes_logo.png';
-import { notify } from '../utils/notifications';
 
 const router = useRouter();
+const userName = ref('Usuario');
 const activeForm = ref(null);
 const showPlatforms = ref(false);
 const selectedPlatform = ref(null);
+const isUserMenuOpen = ref(false);
+
+const toggleUserMenu = () => {
+  isUserMenuOpen.value = !isUserMenuOpen.value;
+};
+
+const handleEditProfile = () => {
+  alert('Editar perfil - Próximamente');
+  isUserMenuOpen.value = false;
+};
+
+const handleLogout = () => {
+  localStorage.removeItem('userName');
+  router.push('/login');
+};
 
 const platforms = [
   { id: 'soi', name: 'Plataforma SOI', image: soiLogo },
@@ -118,9 +140,26 @@ const handleFormAction = () => {
   if (!showPlatforms.value) {
     showPlatforms.value = true;
   } else if (selectedPlatform.value) {
-    activeForm.value = selectedPlatform.value;
+    if (selectedPlatform.value === 'soi') {
+      activeForm.value = 'soi';
+    } else if (selectedPlatform.value === 'asopagos') {
+      activeForm.value = 'asopagos';
+    } else if (selectedPlatform.value === 'compensar') {
+      activeForm.value = 'compensar';
+    } else if (selectedPlatform.value === 'aportes') {
+      activeForm.value = 'aportes';
+    } else {
+      alert(`Plataforma ${selectedPlatform.value} seleccionada. Próximamente disponible.`);
+    }
   }
 };
+
+onMounted(() => {
+  const savedName = localStorage.getItem('userName');
+  if (savedName) {
+    userName.value = savedName;
+  }
+});
 </script>
 
 <style scoped>
@@ -136,7 +175,7 @@ const handleFormAction = () => {
   zoom: 0.8;
 }
 
-/* Estilo de la Barra de Navegación */
+/* Navbar Style */
 .navbar {
   height: 52px; /* Reduced from 64px */
   background-color: white;
@@ -283,7 +322,7 @@ const handleFormAction = () => {
   color: #64748b;
 }
 
-/* Estilo del Menú Desplegable de Usuario */
+/* User Dropdown Style */
 .user-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -346,7 +385,7 @@ const handleFormAction = () => {
   justify-content: center;
 }
 
-/* Estilo de la Sección Hero */
+/* Hero Section Style */
 .page-main {
   padding: 1.5rem 2rem; /* Reduced from 2rem 4rem */
   max-width: 1200px;
@@ -404,7 +443,7 @@ const handleFormAction = () => {
 
 
 
-/* Estilo de las Tarjetas de Acción */
+/* Action Cards Style */
 .action-cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -475,7 +514,7 @@ const handleFormAction = () => {
   gap: 0.5rem; /* Reduced */
 }
 
-/* Mini Lista de Plataformas */
+/* Platform Mini List */
 .platform-mini-list {
   display: flex;
   flex-direction: column;
@@ -586,7 +625,7 @@ const handleFormAction = () => {
 .btn-action.secondary { background-color: #0f172a; color: white; }
 .btn-action.secondary:hover { background-color: #1e293b; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25); }
 
-/* Contenedor de Formulario Embebido */
+/* Embedded Form Container */
 .form-embedded-container {
   background-color: white;
   border-radius: 24px;
@@ -596,7 +635,7 @@ const handleFormAction = () => {
   overflow: hidden;
 }
 
-/* Estilo del Pie de Página */
+/* Footer Style */
 .page-footer {
   margin-top: auto;
   padding: 3rem 4rem;

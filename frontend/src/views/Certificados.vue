@@ -1,15 +1,59 @@
-<template>
-  <div class="certificates-page">
+﻿<template>
+  <div class="certificates-container">
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+      <div class="nav-left">
+        <div class="brand">
+          <div class="brand-logo"></div>
+          <span class="brand-name">Certificados SS</span>
+        </div>
+        <nav class="nav-links">
+          <router-link to="/certificados" class="nav-link active">Certificados</router-link>
+        </nav>
+      </div>
+
+      <div class="nav-right">
+        <div class="nav-icons">
+          <button class="icon-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+          </button>
+        </div>
+        <div class="user-container">
+          <div class="user-info" @click="toggleUserMenu">
+            <div class="user-text">
+              <span class="user-name">{{ userName }}</span>
+              <span class="user-role">Administrador</span>
+            </div>
+            <div class="user-avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+          </div>
+
+          <!-- Profile Dropdown -->
+          <div v-if="isUserMenuOpen" class="user-dropdown">
+            <button class="dropdown-item" @click="handleEditProfile">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+              Editar perfil
+            </button>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item logout" @click="handleLogout">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Cerrar sesión
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
 
     <main class="page-main">
-      <!-- Fila de Encabezado -->
+      <!-- Header Row -->
       <div class="page-header">
         <div class="title-section">
           <h1 class="page-title">Reportes de Cumplimiento</h1>
           <p class="page-subtitle">Gestione, filtre y exporte certificados de seguridad social de contratistas</p>
         </div>
         <div class="header-actions">
-          <button class="btn btn-white" @click="handleExportPDF()">
+          <button class="btn btn-white" @click="handleExportPDF">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             Exportar PDF
           </button>
@@ -18,14 +62,14 @@
             Exportar Excel
           </button>
           <button class="btn btn-blue" @click="handleExportDrive">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-8 10 8M12 22V12"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             Sincronizar Drive
           </button>
         </div>
-      </div>      <!-- Barra de Filtros -->
+      </div>      <!-- Filters Bar -->
       <div class="filters-bar">
         <div class="filter-group">
-          <!-- Filtro de Fecha -->
+          <!-- Date Filter -->
           <div class="filter-item-wrapper">
             <button class="filter-btn" @click="toggleDateMenu">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
@@ -49,7 +93,7 @@
             </div>
           </div>
 
-          <!-- Filtro de Contratista -->
+          <!-- Contractor Filter -->
           <div class="filter-item-wrapper">
             <button class="filter-btn" @click="toggleContractorMenu">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -79,7 +123,7 @@
             </div>
           </div>
 
-          <!-- Filtro de Plataforma -->
+          <!-- Platform Filter -->
           <div class="filter-item-wrapper">
             <button class="filter-btn" @click="togglePlatformMenu">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
@@ -103,7 +147,7 @@
             </div>
           </div>
 
-          <!-- Filtro de Estado -->
+          <!-- Status Filter -->
           <div class="filter-item-wrapper">
             <button class="filter-btn" @click="toggleStatusMenu">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
@@ -128,7 +172,7 @@
           </div>
         </div>
 
-        <!-- Barra de Búsqueda Global -->
+        <!-- Global Search Bar -->
         <div class="search-bar-wrapper">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           <input 
@@ -145,7 +189,7 @@
         </button>
       </div>
 
-      <!-- Tarjeta de Tabla Principal -->
+      <!-- Main Table Card -->
       <div class="table-card">
         <table class="data-table">
           <thead>
@@ -185,7 +229,7 @@
               </td>
               <td>
                 <button class="btn-visualize" @click="handleVisualize(item)">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75(0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z"/><circle cx="12" cy="12" r="3"/></svg>
                   <span>Visualizar</span>
                 </button>
               </td>
@@ -198,7 +242,7 @@
           </tbody>
         </table>
 
-        <!-- Pie de Tabla/Paginación -->
+        <!-- Table Footer/Pagination -->
         <div class="table-footer">
           <span class="results-info">
             Mostrando {{ (currentPage - 1) * itemsPerPage + 1 }} a {{ Math.min(currentPage * itemsPerPage, filteredCertificates.length) }} de {{ filteredCertificates.length }} resultados
@@ -219,7 +263,7 @@
         </div>
       </div>
 
-      <!-- Cuadrícula de Estadísticas -->
+      <!-- Stats Grid -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-icon green">
@@ -241,16 +285,60 @@
         </div>
         <div class="stat-card">
           <div class="stat-icon blue">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><polyline points="22 4 15 4 15 11"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
           </div>
           <div class="stat-info">
             <span class="stat-label">ÚLTIMA SINCRONIZACIÓN</span>
-            <span class="stat-value">{{ lastSyncTime || 'No sincronizado' }}</span>
+            <span class="stat-value">{{ lastSyncTime }}</span>
           </div>
         </div>
       </div>
 
-      <!-- Modal de Visualización de Formulario -->
+      <!-- Drive Sync Modal -->
+      <div v-if="isDriveModalOpen" class="modal-overlay" @click.self="closeDriveModal">
+        <div class="modal-card">
+          <div class="modal-header">
+            <div class="modal-icon-circle">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
+            <h3>Sincronizar con Google Drive</h3>
+            <p>El reporte se subirá automáticamente a su unidad en la nube.</p>
+          </div>
+          
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Cuenta de Google (Email)</label>
+              <div class="input-with-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12A10 10 0 0 1 12 22 10 10 0 0 1 2 12 10 10 0 0 1 12 2 10 10 0 0 1 22 12z"/><path d="M16 12a4 4 0 1 0-8 0 4 4 0 0 0 8 0Zm0 0v1.5a2.5 2.5 0 0 0 5 0V12a9 9 0 1 0-3.9 7.1"/></svg>
+                <input 
+                  type="email" 
+                  v-model="driveEmail" 
+                  placeholder="ejemplo@google.com" 
+                  :disabled="isSyncingToDrive"
+                >
+              </div>
+              <small>Esta es la cuenta donde se guardará el archivo PDF generado.</small>
+            </div>
+
+            <div v-if="isSyncingToDrive" class="sync-progress">
+              <div class="progress-bar-container">
+                <div class="progress-bar-fill"></div>
+              </div>
+              <p>Sincronizando archivos con Google Drive...</p>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button class="btn-cancel" @click="closeDriveModal" :disabled="isSyncingToDrive">Cancelar</button>
+            <button class="btn-confirm" @click="confirmDriveExport" :disabled="isSyncingToDrive">
+              <span v-if="isSyncingToDrive" class="loading-spinner-small"></span>
+              {{ isSyncingToDrive ? 'Sincronizando...' : 'Empezar Sincronización' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- View Form Modal -->
       <div v-if="isViewModalOpen" class="modal-overlay form-modal-overlay" @click.self="isViewModalOpen = false">
         <div class="form-modal-container">
           <SoiForm 
@@ -280,7 +368,7 @@
         </div>
       </div>
 
-      <!-- Modal de Edición de Perfil -->
+      <!-- Edit Profile Modal -->
       <div v-if="isEditProfileModalOpen" class="modal-overlay" @click.self="closeEditProfileModal">
         <div class="modal-card">
           <div class="modal-header">
@@ -325,47 +413,9 @@
           </div>
         </div>
       </div>
-
-      <!-- Modal de Sincronización de Drive -->
-      <div v-if="isDriveModalOpen" class="modal-overlay" @click.self="closeDriveModal">
-        <div class="modal-card">
-          <div class="modal-header">
-            <div class="modal-icon-circle">
-              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4285F4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-8 10 8M12 22V12"/></svg>
-            </div>
-            <span class="proto-badge">Integración Drive</span>
-            <h3>Sincronizar con Google Drive</h3>
-            <p>Se generará un reporte consolidado y se subirá automáticamente a tu unidad de Drive.</p>
-          </div>
-
-          <div class="modal-body">
-            <label>Cuenta de Destino</label>
-            <div class="input-with-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              <input type="email" v-model="driveEmail" placeholder="correo@ejemplo.com">
-            </div>
-            <small>El reporte estará disponible en la carpeta "Certificados_SENA".</small>
-
-            <div v-if="isSyncingToDrive" class="sync-progress">
-              <div class="progress-bar-container">
-                <div class="progress-bar-fill"></div>
-              </div>
-              <p>Sincronizando archivos...</p>
-            </div>
-          </div>
-
-          <div class="modal-footer">
-            <button class="btn-cancel" @click="closeDriveModal" :disabled="isSyncingToDrive">Cancelar</button>
-            <button class="btn-confirm" @click="confirmDriveExport" :disabled="isSyncingToDrive">
-              <span v-if="isSyncingToDrive" class="loading-spinner-small"></span>
-              {{ isSyncingToDrive ? 'Sincronizando...' : 'Iniciar Sincronización' }}
-            </button>
-          </div>
-        </div>
-      </div>
     </main>
 
-    <!-- Pie de Página -->
+    <!-- Footer -->
     <footer class="page-footer">
       <div class="footer-left">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -381,104 +431,504 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import SoiForm from '../components/SoiForm.vue';
 import AsopagosForm from '../components/AsopagosForm.vue';
 import CompensarForm from '../components/CompensarForm.vue';
 import AportesForm from '../components/AportesForm.vue';
-import { useAuth } from '../composables/useAuth';
-import { useCertificates } from '../composables/useCertificates';
 
-const { isEditProfileModalOpen, profileData, handleEditProfile, closeEditProfileModal, saveProfileChanges } = useAuth();
-const {
-  isDateMenuOpen, isContractorMenuOpen, isPlatformMenuOpen, isStatusMenuOpen,
-  filterDateStart, filterDateEnd, searchContractorText, selectedContractor,
-  filterPlatform, filterStatus, searchQuery, currentPage, itemsPerPage,
-  isDriveModalOpen, isSyncingToDrive, driveEmail, lastSyncTime,
-  isViewModalOpen, selectedItemForView,
-  formattedDateRange, filteredContractorNames, paginatedCertificates,
-  totalPages, totalApproved, totalPending,
-  toggleDateMenu, toggleContractorMenu, togglePlatformMenu, toggleStatusMenu,
-  selectContractor, selectPlatform, selectStatus, clearDateRange, clearAllFilters,
-  prevPage, nextPage, goToPage,
-  fetchCertificates, handleVisualize, handleExportPDF, handleExportExcel, handleExportDrive, confirmDriveExport, closeDriveModal
-} = useCertificates();
+const router = useRouter();
+const userName = ref('Usuario');
+const isUserMenuOpen = ref(false);
+const isDateMenuOpen = ref(false);
+const isContractorMenuOpen = ref(false);
+const isPlatformMenuOpen = ref(false);
+const isStatusMenuOpen = ref(false);
+const filterDateStart = ref('');
+const filterDateEnd = ref('');
+const searchContractorText = ref('');
+const selectedContractor = ref('');
+const filterPlatform = ref('');
+const filterStatus = ref('');
+const searchQuery = ref('');
+const isDriveModalOpen = ref(false);
+const isSyncingToDrive = ref(false);
+const driveEmail = ref('usuario.ejemplo@sena.edu.co');
+const lastSyncTime = ref('');
+
+// Visualization Modal State
+const isViewModalOpen = ref(false);
+const selectedItemForView = ref(null);
+
+const handleVisualize = (item) => {
+  selectedItemForView.value = { ...item };
+  isViewModalOpen.value = true;
+};
+
+const toggleUserMenu = () => {
+  isUserMenuOpen.value = !isUserMenuOpen.value;
+  if (isUserMenuOpen.value) {
+    isDateMenuOpen.value = false;
+    isContractorMenuOpen.value = false;
+    isPlatformMenuOpen.value = false;
+    isStatusMenuOpen.value = false;
+  }
+};
+
+const toggleDateMenu = () => {
+  isDateMenuOpen.value = !isDateMenuOpen.value;
+  if (isDateMenuOpen.value) {
+    isUserMenuOpen.value = false;
+    isContractorMenuOpen.value = false;
+    isPlatformMenuOpen.value = false;
+    isStatusMenuOpen.value = false;
+  }
+};
+
+const toggleContractorMenu = () => {
+  isContractorMenuOpen.value = !isContractorMenuOpen.value;
+  if (isContractorMenuOpen.value) {
+    isUserMenuOpen.value = false;
+    isDateMenuOpen.value = false;
+    isPlatformMenuOpen.value = false;
+    isStatusMenuOpen.value = false;
+  }
+};
+
+const togglePlatformMenu = () => {
+  isPlatformMenuOpen.value = !isPlatformMenuOpen.value;
+  if (isPlatformMenuOpen.value) {
+    isUserMenuOpen.value = false;
+    isDateMenuOpen.value = false;
+    isContractorMenuOpen.value = false;
+    isStatusMenuOpen.value = false;
+  }
+};
+
+const toggleStatusMenu = () => {
+  isStatusMenuOpen.value = !isStatusMenuOpen.value;
+  if (isStatusMenuOpen.value) {
+    isUserMenuOpen.value = false;
+    isDateMenuOpen.value = false;
+    isContractorMenuOpen.value = false;
+    isPlatformMenuOpen.value = false;
+  }
+};
+
+const selectContractor = (name) => {
+  selectedContractor.value = name;
+  isContractorMenuOpen.value = false;
+};
+
+const selectPlatform = (plat) => {
+  filterPlatform.value = plat;
+  isPlatformMenuOpen.value = false;
+};
+
+const selectStatus = (status) => {
+  filterStatus.value = status;
+  isStatusMenuOpen.value = false;
+};
+
+const isEditProfileModalOpen = ref(false);
+const profileData = ref({
+  password: '',
+  confirmPassword: ''
+});
+
+const handleEditProfile = () => {
+  isEditProfileModalOpen.value = true;
+  isUserMenuOpen.value = false;
+};
+
+const closeEditProfileModal = () => {
+  isEditProfileModalOpen.value = false;
+  profileData.value.password = '';
+  profileData.value.confirmPassword = '';
+};
+
+const saveProfileChanges = () => {
+  if (profileData.value.password || profileData.value.confirmPassword) {
+    if (profileData.value.password !== profileData.value.confirmPassword) {
+      alert('Las contraseñas no coinciden.');
+      return;
+    }
+    localStorage.setItem('userPassword', profileData.value.password);
+  }
+  
+  if (userName.value.trim() !== '') {
+    localStorage.setItem('userName', userName.value);
+  }
+  
+  alert('Perfil actualizado correctamente.');
+  closeEditProfileModal();
+};
+
+const handleLogout = () => {
+  localStorage.removeItem('userName');
+  router.push('/dashboard');
+};
+
+const currentPage = ref(1);
+const itemsPerPage = ref(5);
+
+const certificates = ref([
+  { id: '1290', persona: 'Santiago Pérez', date: '01 Oct, 2023', name: 'Instructores', cedula: '1098765432', initials: 'IN', platform: 'SOI', status: 'Aprobado' },
+  { id: '1289', persona: 'María García', date: '02 Oct, 2023', name: 'Apoyo administrativo', cedula: '1087654321', initials: 'AA', platform: 'Asopagos', status: 'No aprobado' },
+  { id: '1288', persona: 'Carlos Ruiz', date: '05 Oct, 2023', name: 'Profesionales', cedula: '1076543210', initials: 'PR', platform: 'SOI', status: 'Aprobado' },
+  { id: '1287', persona: 'Elena López', date: '07 Oct, 2023', name: 'Tecnología', initials: 'TE', cedula: '1065432109', platform: 'Asopagos', status: 'Aprobado' },
+  { id: '1286', persona: 'Andrés Castro', date: '10 Oct, 2023', name: 'Bienestar', initials: 'BI', cedula: '1054321098', platform: 'SOI', status: 'No aprobado' },
+  { id: '1285', persona: 'Paula Ortiz', date: '12 Oct, 2023', name: 'Gestión documental', cedula: '1043210987', initials: 'GD', platform: 'Asopagos', status: 'Aprobado' },
+  { id: '1284', persona: 'Javier Rocha', date: '14 Oct, 2023', name: 'Instructores', cedula: '1032109876', initials: 'IN', platform: 'Compensar', status: 'Aprobado' },
+  { id: '1283', persona: 'Laura Vaca', date: '15 Oct, 2023', name: 'Profesionales', cedula: '1021098765', initials: 'PR', platform: 'Aportes', status: 'Aprobado' },
+  { id: '1282', persona: 'Ricardo Silva', date: '16 Oct, 2023', name: 'Tecnología', cedula: '1010987654', initials: 'TE', platform: 'SOI', status: 'No aprobado' },
+  { id: '1281', persona: 'Monica Diaz', date: '18 Oct, 2023', name: 'Bienestar', cedula: '1009876543', initials: 'BI', platform: 'Asopagos', status: 'Aprobado' }
+]);
+
+// Helper to parse "DD Mon, YYYY" (e.g., "01 Oct, 2023")
+const parseItemDate = (dateStr) => {
+  const months = {
+    Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
+    Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
+  };
+  const parts = dateStr.replace(',', '').split(' ');
+  const day = parseInt(parts[0]);
+  const month = months[parts[1]];
+  const year = parseInt(parts[2]);
+  return new Date(year, month, day);
+};
+
+const filteredCertificates = computed(() => {
+  let result = certificates.value;
+
+  // Global Search (Name, Cedula, Platform)
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase();
+    result = result.filter(item => 
+      item.name.toLowerCase().includes(q) || 
+      item.cedula.toLowerCase().includes(q) || 
+      item.platform.toLowerCase().includes(q)
+    );
+  }
+
+  // Filter by Contractor
+  if (selectedContractor.value) {
+    result = result.filter(item => item.name === selectedContractor.value);
+  }
+
+  // Filter by Platform
+  if (filterPlatform.value) {
+    result = result.filter(item => item.platform.toLowerCase() === filterPlatform.value.toLowerCase());
+  }
+
+  // Filter by Status
+  if (filterStatus.value) {
+    result = result.filter(item => item.status === filterStatus.value);
+  }
+
+  // Filter by Date
+  if (filterDateStart.value || filterDateEnd.value) {
+    const start = filterDateStart.value ? new Date(filterDateStart.value) : null;
+    const end = filterDateEnd.value ? new Date(filterDateEnd.value) : null;
+
+    if (start) start.setHours(0, 0, 0, 0);
+    if (end) end.setHours(23, 59, 59, 999);
+
+    result = result.filter(item => {
+      const itemDate = parseItemDate(item.date);
+      if (start && itemDate < start) return false;
+      if (end && itemDate > end) return false;
+      return true;
+    });
+  }
+
+  return result;
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredCertificates.value.length / itemsPerPage.value);
+});
+
+const paginatedCertificates = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return filteredCertificates.value.slice(start, end);
+});
+
+const totalApproved = computed(() => {
+  return filteredCertificates.value.filter(item => item.status === 'Aprobado').length;
+});
+
+const totalPending = computed(() => {
+  return filteredCertificates.value.filter(item => item.status === 'No aprobado').length;
+});
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--;
+};
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++;
+};
+
+const goToPage = (page) => {
+  currentPage.value = page;
+};
+
+// Reset page when filters change
+watch([searchQuery, selectedContractor, filterPlatform, filterStatus, filterDateStart, filterDateEnd], () => {
+  currentPage.value = 1;
+});
+
+const filteredContractorNames = computed(() => {
+  const names = [...new Set(certificates.value.map(item => item.name))];
+  if (!searchContractorText.value) return names;
+  return names.filter(name => 
+    name.toLowerCase().includes(searchContractorText.value.toLowerCase())
+  );
+});
+
+const formattedDateRange = computed(() => {
+  if (!filterDateStart.value && !filterDateEnd.value) return 'Rango de Fechas';
+  if (filterDateStart.value && filterDateEnd.value) return `${filterDateStart.value} - ${filterDateEnd.value}`;
+  return filterDateStart.value ? `Desde ${filterDateStart.value}` : `Hasta ${filterDateEnd.value}`;
+});
+
+const clearDateRange = () => {
+  filterDateStart.value = '';
+  filterDateEnd.value = '';
+};
+
+const clearAllFilters = () => {
+  clearDateRange();
+  selectedContractor.value = '';
+  searchContractorText.value = '';
+  filterPlatform.value = '';
+  filterStatus.value = '';
+  searchQuery.value = '';
+  currentPage.value = 1;
+};
+
+const handleExportExcel = () => {
+  if (filteredCertificates.value.length === 0) {
+    alert('No hay datos para exportar con los filtros actuales.');
+    return;
+  }
+
+  // Headers for CSV
+  const headers = ['Fecha de Solicitud', 'ID (Cédula)', 'Nombre', 'Contratista', 'Plataforma', 'Estado'];
+  
+  // Map data to rows
+  const rows = filteredCertificates.value.map(item => [
+    item.date,
+    item.cedula,
+    item.persona,
+    item.name,
+    item.platform,
+    item.status
+  ]);
+
+  // Combined CSV content with BOM for UTF-8 (Excel friendly)
+  const csvContent = "\uFEFF" + [
+    headers.join(','),
+    ...rows.map(row => row.join(','))
+  ].join('\n');
+
+  // Create blob and download link
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'certificados_export.csv');
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+const handleExportPDF = (specificItem = null) => {
+  const dataToExport = specificItem ? [specificItem] : filteredCertificates.value;
+
+  if (dataToExport.length === 0) {
+    alert('No hay datos para exportar.');
+    return;
+  }
+  
+  const doc = new jsPDF();
+  
+  // Add title
+  doc.setFontSize(18);
+  const title = specificItem ? `Formulario de Contratista - ${specificItem.persona}` : 'Reporte de Cumplimiento de Certificados';
+  doc.text(title, 14, 22);
+  doc.setFontSize(11);
+  doc.setTextColor(100);
+  
+  // Add metadata
+  const date = new Date().toLocaleDateString();
+  doc.text(`Fecha de generación: ${date}`, 14, 30);
+  if (!specificItem) {
+    doc.text(`Total de registros: ${dataToExport.length}`, 14, 36);
+  }
+  
+  // Generate Table
+  const tableColumn = ["Fecha", "ID (Cédula)", "Nombre", "Contratista", "Plataforma", "Estado"];
+  const tableRows = dataToExport.map(item => [
+    item.date,
+    item.cedula,
+    item.persona,
+    item.name,
+    item.platform,
+    item.status
+  ]);
+
+  autoTable(doc, {
+    head: [tableColumn],
+    body: tableRows,
+    startY: specificItem ? 40 : 45,
+    theme: 'striped',
+    headStyles: { fillColor: [34, 197, 94] }, // Verde SENA
+    styles: { fontSize: 9 }
+  });
+
+  // Download the PDF
+  const filename = specificItem ? `formulario_${specificItem.cedula}.pdf` : 'reporte_certificados.pdf';
+  doc.save(filename);
+};
+
+const handleExportDrive = () => {
+  if (filteredCertificates.value.length === 0) {
+    alert('No hay datos para sincronizar con Google Drive.');
+    return;
+  }
+  isDriveModalOpen.value = true;
+};
+
+const closeDriveModal = () => {
+  if (isSyncingToDrive.value) return;
+  isDriveModalOpen.value = false;
+};
+
+const confirmDriveExport = () => {
+  if (!driveEmail.value || !driveEmail.value.includes('@')) {
+    alert('Por favor, ingrese un correo electrónico válido.');
+    return;
+  }
+
+  isSyncingToDrive.value = true;
+  
+  // Simulate the process
+  setTimeout(() => {
+    // Stage 2: Uploading
+    setTimeout(() => {
+      isSyncingToDrive.value = false;
+      isDriveModalOpen.value = false;
+      alert(`¡Sincronización Exitosa! El reporte se ha guardado en la unidad de Drive asociada a: ${driveEmail.value}`);
+      
+      // Persist the email used if it changed
+      localStorage.setItem('lastDriveEmail', driveEmail.value);
+    }, 2500);
+  }, 1500);
+};
+
+const generatePDFBlob = () => {
+  const doc = new jsPDF();
+  doc.setFontSize(18);
+  doc.text('Reporte de Cumplimiento de Certificados', 14, 22);
+  doc.setFontSize(11);
+  const date = new Date().toLocaleDateString();
+  doc.text(`Fecha: ${date}`, 14, 30);
+  
+  const tableColumn = ["Fecha", "ID (Cédula)", "Nombre", "Contratista", "Plataforma", "Estado"];
+  const tableRows = filteredCertificates.value.map(item => [
+    item.date, item.cedula, item.persona, item.name, item.platform, item.status
+  ]);
+
+  autoTable(doc, {
+    head: [tableColumn],
+    body: tableRows,
+    startY: 40,
+    theme: 'striped',
+    headStyles: { fillColor: [34, 197, 94] }
+  });
+  
+  return doc;
+};
 
 onMounted(() => {
-  fetchCertificates();
+  const savedName = localStorage.getItem('userName');
+  if (savedName) {
+    userName.value = savedName;
+  }
+
+  const savedEmail = localStorage.getItem('userEmail') || localStorage.getItem('lastDriveEmail');
+  if (savedEmail) {
+    driveEmail.value = savedEmail;
+  }
+  
+  // Set sync time
+  const now = new Date();
+  lastSyncTime.value = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 });
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-.certificates-page {
+.certificates-container {
   font-family: 'Inter', sans-serif;
+  background-color: #f1f8f6; /* Very light green-grey */
+  min-height: 125vh; /* Compensates for zoom: 0.8 (100 / 0.8) */
   color: #0f172a;
-}
-
-/* Contenido Principal de la Página */
-.page-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem 2rem;
-}
-
-.page-header {
   display: flex;
+  flex-direction: column;
+  zoom: 0.8;
+}
+
+/* Navbar */
+.navbar {
+  height: 52px; /* Reduced from 60px */
+  background-color: white;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
+  padding: 0 2rem; /* Reduced from 4rem */
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.page-title {
-  font-size: 1.6rem;
+.nav-left, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-logo {
+  width: 24px;
+  height: 24px;
+  background-color: #39a900;
+  border-radius: 6px;
+}
+
+.brand-name {
   font-weight: 800;
-  line-height: 1.15;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
+  font-size: 1rem;
 }
 
-.page-subtitle {
-  color: #64748b;
-  font-size: 0.85rem;
-  line-height: 1.6;
-}
-
-.header-actions {
+.nav-links {
   display: flex;
-  gap: 1rem;
-}
-
-.btn {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 1.25rem;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s;
-}
-
-.btn-white {
-  background-color: #f8fafc;
-  color: #1e293b;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-}
-
-.btn-green {
-  background-color: #22c55e;
-  color: white;
-  box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.4);
-}
-
-.btn-blue {
-  background-color: #4285F4;
-  color: white;
-  box-shadow: 0 10px 15px -3px rgba(66, 133, 244, 0.4);
+  gap: 2rem;
 }
 
 .nav-link {
@@ -509,40 +959,9 @@ onMounted(() => {
 
 .nav-icons {
   display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  padding-right: 1.25rem;
-  border-right: 1px solid #f1f5f9;
-}
-
-.nav-icon-badge {
-  position: relative;
-  color: #64748b;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-}
-
-.nav-icon-badge:hover {
-  background-color: #f1f5f9;
-  color: #0f172a;
-}
-
-.badge-dot {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 9px;
-  height: 9px;
-  background-color: #ef4444;
-  border: 1.5px solid white;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.2);
+  gap: 0.75rem;
+  border-right: 1px solid #e2e8f0;
+  padding-right: 1.5rem;
 }
 
 .icon-btn {
@@ -595,7 +1014,7 @@ onMounted(() => {
   color: #64748b;
 }
 
-/* Estilo del Menú Desplegable de Usuario */
+/* User Dropdown Style */
 .user-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -658,7 +1077,7 @@ onMounted(() => {
   justify-content: center;
 }
 
-/* Contenido Principal de la Página */
+/* Page Main */
 .page-main {
   max-width: 1200px;
   margin: 0 auto;
@@ -669,7 +1088,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem; /* Coincide con hero-section */
+  margin-bottom: 2rem; /* Matches hero-section */
 }
 
 .page-title {
@@ -696,9 +1115,9 @@ onMounted(() => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.55rem 1.25rem; /* Reduced from 0.75rem 1.5rem */
-  border-radius: 10px; /* Reducido de 12px */
+  border-radius: 10px; /* Reduced from 12px */
   font-weight: 700;
-  font-size: 0.8rem; /* Reducido de 0.9rem */
+  font-size: 0.8rem; /* Reduced from 0.9rem */
   cursor: pointer;
   border: none;
   transition: all 0.2s;
@@ -732,15 +1151,11 @@ onMounted(() => {
   display: inline-block;
 }
 
-
-
-
-
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-/* Barra de Filtros */
+/* Filters Bar */
 .filters-bar {
   display: flex;
   justify-content: space-between;
@@ -797,7 +1212,7 @@ onMounted(() => {
   margin-left: auto;
 }
 
-/* Desplegable del Selector de Fecha */
+/* Date Picker Dropdown */
 .date-picker-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -866,7 +1281,7 @@ onMounted(() => {
   cursor: pointer;
 }
 
-/* Desplegable del Filtro de Contratista */
+/* Contractor Filter Dropdown */
 .contractor-picker-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -940,7 +1355,7 @@ onMounted(() => {
   color: #16a34a;
 }
 
-/* Desplegable del Filtro de Plataforma */
+/* Platform Filter Dropdown */
 .platform-picker-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -979,7 +1394,7 @@ onMounted(() => {
   color: #16a34a;
 }
 
-/* Desplegable del Filtro de Estado */
+/* Status Filter Dropdown */
 .status-picker-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -1018,7 +1433,7 @@ onMounted(() => {
   color: #16a34a;
 }
 
-/* Barra de Búsqueda Global */
+/* Global Search Bar */
 .search-bar-wrapper {
   position: relative;
   flex: 1;
@@ -1099,7 +1514,7 @@ onMounted(() => {
   opacity: 1;
 }
 
-/* Tarjeta de Tabla */
+/* Table Card */
 .table-card {
   background-color: white;
   border-radius: 20px;
@@ -1116,8 +1531,8 @@ onMounted(() => {
 
 .data-table th {
   text-align: left;
-  padding: 0.85rem 1.25rem; /* Reducido de 1.25rem 1.5rem */
-  font-size: 0.7rem; /* Reducido de 0.75rem */
+  padding: 0.85rem 1.25rem; /* Reduced from 1.25rem 1.5rem */
+  font-size: 0.7rem; /* Reduced from 0.75rem */
   font-weight: 800;
   color: #64748b;
   background-color: #f8fafc;
@@ -1126,9 +1541,9 @@ onMounted(() => {
 }
 
 .data-table td {
-  padding: 0.85rem 1.25rem; /* Reducido de 1.25rem 1.5rem */
+  padding: 0.85rem 1.25rem; /* Reduced from 1.25rem 1.5rem */
   border-bottom: 1px solid #f1f5f9;
-  font-size: 0.85rem; /* Reducido de 0.9rem */
+  font-size: 0.85rem; /* Reduced from 0.9rem */
 }
 
 .id-cell {
@@ -1218,7 +1633,7 @@ onMounted(() => {
   color: #0f172a;
 }
 
-/* Estilo del Pie de Tabla */
+/* Table Footer */
 .table-footer {
   padding: 1rem 1.5rem;
   display: flex;
@@ -1255,7 +1670,7 @@ onMounted(() => {
   border-color: #22c55e;
 }
 
-/* Tarjetas de Estadísticas */
+/* Stats Cards */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1264,17 +1679,17 @@ onMounted(() => {
 
 .stat-card {
   background-color: white;
-  padding: 1.25rem;
-  border-radius: 16px;
+  padding: 1.25rem; /* Reduced from 1.5rem */
+  border-radius: 16px; /* Reduced from 20px */
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.25rem; /* Reduced from 1.5rem */
   box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
 .stat-icon {
-  width: 42px;
-  height: 42px;
+  width: 42px; /* Reduced from 48px */
+  height: 42px; /* Reduced */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1291,23 +1706,59 @@ onMounted(() => {
 }
 
 .stat-label {
-  font-size: 0.65rem;
+  font-size: 0.65rem; /* Reduced from 0.7rem */
   font-weight: 800;
   color: #94a3b8;
   letter-spacing: 0.05em;
 }
 
 .stat-value {
-  font-size: 1.3rem;
+  font-size: 1.3rem; /* Reduced from 1.5rem */
   font-weight: 900;
 }
 
 @media (max-width: 1024px) {
   .page-main { padding: 2rem; }
+  .navbar { padding: 0 2rem; }
   .stats-grid { grid-template-columns: 1fr; }
 }
 
-/* Estilos de Modales */
+/* Footer Style */
+.page-footer {
+  margin-top: auto;
+  padding: 3rem 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  border-top: 1px solid #f1f5f9;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: #0f172a; }
+
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -1319,7 +1770,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 5000;
+  z-index: 1000;
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -1509,7 +1960,7 @@ onMounted(() => {
   100% { transform: translateX(100%); }
 }
 
-/* Estilos Especiales del Modal de Visualización */
+/* Visualization Modal Special Styles */
 .form-modal-overlay {
   z-index: 2000;
   display: flex;
@@ -1546,5 +1997,4 @@ onMounted(() => {
 .form-modal-container::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
-</style>
 </style>
